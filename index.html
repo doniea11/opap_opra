@@ -14,7 +14,6 @@
     .win-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
     .win-input { border: 1px solid #cbd5e1; border-radius: 6px; border-bottom: 2px solid #0067c0; padding: 10px 14px; transition: all 0.2s; width: 100%; font-size: 16px; }
     .win-input:focus { outline: none; background-color: #f0f9ff; border-color: #0067c0; }
-    .hidden-view { display: none; }
     
     .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; border: 1px solid #e2e8f0; }
     table { width: 100%; min-width: 500px; border-collapse: collapse; background: white; }
@@ -78,7 +77,8 @@
 
   <main class="p-4 sm:p-6 flex-1 max-w-5xl mx-auto w-full pb-20">
     
-    <div id="view-home" class="flex flex-col sm:flex-row gap-8 sm:gap-16 justify-center mt-12 sm:mt-24 items-center">
+    <!-- HOME -->
+    <div id="view-home" class="view-section flex flex-col sm:flex-row gap-8 sm:gap-16 justify-center mt-12 sm:mt-24 items-center">
       <button onclick="nav('opap-menu')" class="win-card btn-circle w-48 h-48 sm:w-56 sm:h-56 rounded-full flex flex-col items-center justify-center cursor-pointer border-4 border-transparent hover:border-[#0067c0] transition-all bg-white shadow-lg">
         <svg xmlns="http://www.w3.org/2000/svg" class="ball-icon w-14 h-14 sm:w-16 sm:h-16 mb-2 sm:mb-3 text-[#0067c0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle><path d="M12 12l3-2.5-1-4.5H10l-1 4.5z"></path><path d="M12 12l-4 2-2-3"></path><path d="M15 9.5l5-1.5"></path><path d="M12 12l2 4 4 1"></path><path d="M8 14l-4 1"></path><path d="M14 16l-1 4"></path><path d="M10 16l1 4"></path>
@@ -96,8 +96,8 @@
       </button>
     </div>
 
-    <!-- OP-AP -->
-    <div id="view-opap-menu" class="hidden-view win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+    <!-- OP-AP MENU -->
+    <div id="view-opap-menu" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
       <h2 class="text-xl sm:text-2xl font-bold mb-6 text-slate-800 border-b pb-3">Menu OP-AP</h2>
       <div class="flex flex-col sm:flex-row gap-3">
         <button onclick="openOpapMaster()" class="win-btn-outline w-full px-4 py-3.5 font-semibold text-sm shadow-sm">Master Data</button>
@@ -106,10 +106,10 @@
       </div>
     </div>
 
-    <div id="view-opap-master" class="hidden-view win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+    <div id="view-opap-master" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Master Data OP-AP</h2>
-        <button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Tutup</button>
+        <button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button>
       </div>
       <input type="hidden" id="opap-id">
       <div class="flex flex-col sm:flex-row gap-4 mb-6 bg-slate-50 p-4 sm:p-5 rounded-xl border border-slate-200">
@@ -125,10 +125,10 @@
       </div>
     </div>
 
-    <div id="view-opap-income" class="hidden-view win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+    <div id="view-opap-income" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
       <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3">
         <h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Input Income OP-AP</h2>
-        <button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Tutup</button>
+        <button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div><label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker</label><select id="opap-income-satker" onchange="loadOpapIncomeNames()" class="win-input"></select></div>
@@ -140,17 +140,17 @@
           <button onclick="applyOpapBulkNominal()" class="win-btn bg-indigo-600 px-5 py-2 h-[42px] mt-auto text-sm">Terapkan Semua</button>
         </div>
         <div id="opap-income-list" class="space-y-3 mb-6"></div>
-        <button onclick="submitOpapIncome()" class="win-btn px-6 py-3.5 w-full font-bold text-base shadow-lg">Simpan Semua Data</button>
+        <button onclick="submitOpapIncome()" class="win-btn px-6 py-3.5 w-full font-bold text-base shadow-lg">Simpan Data Input</button>
       </div>
     </div>
 
-    <div id="view-opap-rekap" class="hidden-view win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
-      <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Rekap OP-AP</h2><button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Tutup</button></div>
+    <div id="view-opap-rekap" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Rekap OP-AP</h2><button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
       <div class="table-container"><table><thead><tr><th>Nama Satker</th><th>Status</th><th>Progres</th><th>Total</th></tr></thead><tbody id="opap-rekap-list"></tbody></table></div>
     </div>
 
-    <!-- OP-RA -->
-    <div id="view-opra-menu" class="hidden-view win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+    <!-- OP-RA MENU -->
+    <div id="view-opra-menu" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
       <h2 class="text-xl sm:text-2xl font-bold mb-6 text-slate-800 border-b pb-3">Menu OP-RA</h2>
       <div class="flex flex-col sm:flex-row gap-3">
         <button onclick="openOpraMaster()" class="win-btn-outline w-full px-4 py-3.5 font-semibold text-sm shadow-sm">Master Satker</button>
@@ -159,8 +159,8 @@
       </div>
     </div>
 
-    <div id="view-opra-master" class="hidden-view win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
-      <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Master OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Tutup</button></div>
+    <div id="view-opra-master" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Master OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
       <input type="hidden" id="opra-id">
       <div class="flex flex-col sm:flex-row gap-4 mb-6 bg-slate-50 p-4 sm:p-5 rounded-xl border border-slate-200">
         <div class="w-full"><label class="block text-xs font-semibold mb-1 text-slate-500 uppercase">Nama Satker Lembaga</label><input type="text" id="opra-satker" class="win-input"></div>
@@ -169,8 +169,8 @@
       <div class="table-container"><table><thead><tr><th>Nama Satker</th><th class="w-24">Aksi</th></tr></thead><tbody id="opra-master-list"></tbody></table></div>
     </div>
 
-    <div id="view-opra-income" class="hidden-view win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
-      <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Input Setoran OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Tutup</button></div>
+    <div id="view-opra-income" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Input Setoran OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
       <div class="space-y-5">
         <div><label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker</label><select id="opra-income-satker" class="win-input"></select></div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -181,8 +181,8 @@
       </div>
     </div>
 
-    <div id="view-opra-rekap" class="hidden-view win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
-      <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Rekap OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Tutup</button></div>
+    <div id="view-opra-rekap" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Rekap OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
       <div class="table-container"><table><thead><tr><th>Nama Satker</th><th>Status Bayar</th><th>Total Nominal</th></tr></thead><tbody id="opra-rekap-list"></tbody></table></div>
     </div>
   </main>
@@ -190,7 +190,6 @@
   <script>
     // ==========================================
     // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI BAWAH INI
-    // Contoh: const API_URL = 'https://script.google.com/macros/s/AKfy.../exec';
     // ==========================================
     const API_URL = 'https://script.google.com/macros/s/AKfycby2tjG46ovU5jH2PZVnZLbwdmYo2E13hQEOprc-7anHzdWQicrdQzEq2OiYziMFYr8sCA/exec'; 
     
@@ -234,9 +233,13 @@
     }
     function closeModal() { document.getElementById('custom-modal').classList.add('hidden'); }
     function formatRp(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); }
+    
+    // Perbaikan Tata Letak Navigasi
     function nav(viewId) {
-      document.querySelectorAll('.hidden-view, #view-home').forEach(el => el.style.display = 'none');
-      document.getElementById('view-' + viewId).style.display = 'block';
+      document.querySelectorAll('.view-section').forEach(el => {
+        el.classList.add('hidden');
+      });
+      document.getElementById('view-' + viewId).classList.remove('hidden');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -284,14 +287,23 @@
       listDiv.innerHTML = html; document.getElementById('opap-names-container').classList.remove('hidden');
     }
     function applyOpapBulkNominal() { const bulkVal = document.getElementById('opap-bulk-nominal').value; document.querySelectorAll('.opap-indiv-nominal').forEach(input => input.value = bulkVal); }
+    
+    // Perbaikan Alur Simpan OP-AP
     async function submitOpapIncome() {
       const tanggal = document.getElementById('opap-income-tanggal').value; const satker = document.getElementById('opap-income-satker').value;
       if(!tanggal || !satker) return showAlert('Isi Tanggal dan Satker!');
       let dataToSave = [];
       document.querySelectorAll('.opap-indiv-nominal').forEach(input => dataToSave.push({ nama: input.getAttribute('data-nama'), nominal: input.value }));
       const msg = await fetchAPI('saveOpapIncome', { tanggal, satker, dataNominal: dataToSave });
-      if(msg) { showAlert(msg); nav('opap-menu'); }
+      if(msg) { 
+        showAlert(msg); 
+        // Mengosongkan form dan tetap di halaman yang sama
+        document.getElementById('opap-income-satker').value = '';
+        document.getElementById('opap-bulk-nominal').value = '';
+        document.getElementById('opap-names-container').classList.add('hidden');
+      }
     }
+
     async function openOpapRekap() {
       nav('opap-rekap'); document.getElementById('opap-rekap-list').innerHTML = '<tr><td colspan="4" class="text-center py-4">Memuat data...</td></tr>';
       const data = await fetchAPI('getRekapOpap');
@@ -336,12 +348,20 @@
       data.forEach(item => options += `<option value="${item.satker}">${item.satker}</option>`);
       document.getElementById('opra-income-satker').innerHTML = options;
     }
+
+    // Perbaikan Alur Simpan OP-RA
     async function submitOpraIncome() {
       const tanggal = document.getElementById('opra-income-tanggal').value; const satker = document.getElementById('opra-income-satker').value; const nominal = document.getElementById('opra-income-nominal').value;
       if(!tanggal || !satker || !nominal) return showAlert('Lengkapi semua data!');
       const msg = await fetchAPI('saveOpraIncome', { tanggal, satker, nominal });
-      if(msg) { showAlert(msg); nav('opra-menu'); }
+      if(msg) { 
+        showAlert(msg); 
+        // Mengosongkan form dan tetap di halaman yang sama
+        document.getElementById('opra-income-satker').value = '';
+        document.getElementById('opra-income-nominal').value = '';
+      }
     }
+
     async function openOpraRekap() {
       nav('opra-rekap'); document.getElementById('opra-rekap-list').innerHTML = '<tr><td colspan="3" class="text-center py-4">Memuat data...</td></tr>';
       const data = await fetchAPI('getRekapOpra');
