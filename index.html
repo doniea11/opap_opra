@@ -59,7 +59,7 @@
     <p class="text-slate-600 font-semibold animate-pulse">Memproses Data...</p>
   </div>
 
-  <!-- PASSWORD MODAL -->
+  <!-- PASSWORD MODAL OVERLAY -->
   <div id="password-modal" class="hidden fixed inset-0 bg-slate-900/60 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all modal-content">
       <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -79,14 +79,14 @@
     </div>
   </div>
 
-  <!-- SATU-SATUNYA INFORMASI MODAL (TIDAK ADA DUPLIKAT LAGI) -->
-  <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-40 z-[80] flex items-center justify-center modal-overlay p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden modal-content">
-      <div class="px-6 py-4 border-b border-slate-100"><h3 id="modal-title" class="text-lg font-bold text-slate-800">Informasi</h3></div>
-      <div class="px-6 py-6 whitespace-pre-wrap"><p id="modal-message" class="text-slate-600 text-sm md:text-base leading-relaxed"></p></div>
+  <!-- INFORMASI MODAL (Diperbarui) -->
+  <div id="sys-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-40 z-[90] flex items-center justify-center modal-overlay p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden modal-content border border-slate-200">
+      <div class="px-6 py-4 border-b border-slate-100"><h3 id="sys-modal-title" class="text-lg font-bold text-slate-800">Informasi</h3></div>
+      <div class="px-6 py-6 whitespace-pre-wrap"><p id="sys-modal-message" class="text-slate-600 text-sm md:text-base leading-relaxed"></p></div>
       <div class="px-6 py-4 bg-slate-50 flex justify-end gap-3 border-t border-slate-100">
-        <button id="modal-btn-cancel" class="win-btn-outline px-5 py-2.5 text-sm font-semibold hidden w-full sm:w-auto" onclick="closeModal()">Batal</button>
-        <button id="modal-btn-ok" class="win-btn px-5 py-2.5 text-sm font-semibold w-full sm:w-auto shadow-md">Oke</button>
+        <button id="sys-modal-cancel" class="win-btn-outline px-5 py-2.5 text-sm font-semibold hidden w-full sm:w-auto" onclick="handleSysCancel()">Batal</button>
+        <button id="sys-modal-ok" class="win-btn px-5 py-2.5 text-sm font-semibold w-full sm:w-auto shadow-md" onclick="handleSysOk()">Oke</button>
       </div>
     </div>
   </div>
@@ -146,12 +146,21 @@
         <h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Input Income OP-AP</h2>
         <button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div>
-          <label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker (Ketik untuk mencari)</label>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker</label>
           <select id="opap-income-satker" class="win-input"></select>
         </div>
-        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tanggal Input</label><input type="date" id="opap-income-tanggal" class="win-input"></div>
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tanggal Bayar</label><input type="date" id="opap-income-tanggal" class="win-input"></div>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">Untuk Bulan</label>
+          <select id="opap-income-bulan" class="win-input bg-white">
+            <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+            <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+            <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+            <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+          </select>
+        </div>
         <div><label class="block text-xs font-semibold mb-1 text-slate-500">Metode Pembayaran</label>
           <select id="opap-income-metode" class="win-input bg-white">
             <option value="TUNAI">TUNAI</option><option value="BRI">BRI</option><option value="BSI">BSI</option>
@@ -169,7 +178,7 @@
       </div>
     </div>
 
-    <!-- REKAP OP-AP WITH FILTERS -->
+    <!-- REKAP OP-AP -->
     <div id="view-opap-rekap" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Rekap OP-AP</h2>
@@ -240,11 +249,20 @@
       <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Input Setoran OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
       <div class="space-y-5">
         <div>
-          <label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker (Ketik untuk mencari)</label>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker</label>
           <select id="opra-income-satker" class="win-input"></select>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tanggal Setor</label><input type="date" id="opra-income-tanggal" class="win-input"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tanggal Bayar</label><input type="date" id="opra-income-tanggal" class="win-input"></div>
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-slate-500">Untuk Bulan</label>
+            <select id="opra-income-bulan" class="win-input bg-white">
+              <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+              <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+              <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+              <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+            </select>
+          </div>
           <div><label class="block text-xs font-semibold mb-1 text-slate-500">Nominal (Rp)</label><input type="number" id="opra-income-nominal" class="win-input"></div>
           <div><label class="block text-xs font-semibold mb-1 text-slate-500">Metode Pembayaran</label>
             <select id="opra-income-metode" class="win-input bg-white">
@@ -257,13 +275,13 @@
       </div>
     </div>
 
+    <!-- REKAP OP-RA -->
     <div id="view-opra-rekap" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
       <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Rekap OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
       
       <div class="flex gap-4 mb-4 border-b border-slate-200 tab-scroll pb-1">
         <button onclick="switchTabOpra('utama')" id="tab-opra-utama" class="py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0] whitespace-nowrap">Rekap Utama</button>
         <button onclick="switchTabOpra('metode')" id="tab-opra-metode" class="py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap">Rekap Metode</button>
-        <button onclick="switchTabOpra('tunggakan')" id="tab-opra-tunggakan" class="py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap">Daftar Tunggakan</button>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
@@ -281,14 +299,10 @@
         </div>
       </div>
 
-      <div id="content-opra-utama" class="table-container"><table><thead><tr><th>Nama Satker</th><th>Status Bayar</th><th>Total Nominal</th></tr></thead><tbody id="opra-rekap-list"></tbody></table></div>
+      <div id="content-opra-utama" class="table-container"><table><thead><tr><th>Nama Satker</th><th>Status Setoran</th><th>Total Nominal</th></tr></thead><tbody id="opra-rekap-list"></tbody></table></div>
       <div id="content-opra-metode" class="table-container hidden">
         <div class="bg-indigo-50 text-indigo-700 p-3 text-sm mb-4 rounded-lg">Rincian pendapatan berdasarkan metode pembayaran sesuai Tahun & Bulan yang dipilih di atas.</div>
         <table><thead><tr><th>Metode Pembayaran</th><th>Jumlah Transaksi</th><th>Total Nominal</th></tr></thead><tbody id="opra-metode-list"></tbody></table>
-      </div>
-      <div id="content-opra-tunggakan" class="table-container hidden">
-        <div class="bg-red-50 text-red-700 p-3 text-sm mb-4 rounded-lg">Rincian tunggakan lembaga.</div>
-        <table><thead><tr><th>Nama Satker</th><th>Bulan Belum Bayar</th></tr></thead><tbody id="opra-tunggakan-list"></tbody></table>
       </div>
     </div>
   </main>
@@ -304,12 +318,8 @@
     let globalRekapOpra = { master: [], income: [] };
     const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
-    let opapSatkerSelect;
-    let opraSatkerSelect;
-    let opapRekapSatkerSelect;
-    
-    let globalAppPin = "122009";
-    let targetPasswordMenu = "";
+    let opapSatkerSelect; let opraSatkerSelect; let opapRekapSatkerSelect;
+    let globalAppPin = "122009"; let targetPasswordMenu = "";
 
     window.addEventListener('DOMContentLoaded', async () => {
       const pin = await fetchAPI('getAppPin', {}, false);
@@ -340,7 +350,7 @@
     }
 
     function switchTabOpra(tab) {
-      ['utama', 'metode', 'tunggakan'].forEach(t => {
+      ['utama', 'metode'].forEach(t => {
         document.getElementById(`tab-opra-${t}`).className = "py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap";
         document.getElementById(`content-opra-${t}`).classList.add('hidden');
       });
@@ -356,7 +366,6 @@
         const result = await response.json();
         if(showLoading) document.getElementById('loading-overlay').classList.add('hidden');
         
-        // Peringatan / Error dimunculkan TANPA tulisan "Error: "
         if (result.status === 'success') return result.data; else { if(showLoading) showAlert(result.message); return null; }
       } catch (error) {
         if(showLoading) { document.getElementById('loading-overlay').classList.add('hidden'); showAlert("Gagal menghubungi server."); }
@@ -364,46 +373,16 @@
       }
     }
 
-    function requirePassword(menu) {
-      targetPasswordMenu = menu;
-      document.getElementById('input-password').value = '';
-      document.getElementById('password-error').classList.add('hidden');
-      document.getElementById('password-modal').classList.remove('hidden');
-      setTimeout(() => document.getElementById('input-password').focus(), 100);
-    }
-
+    function requirePassword(menu) { targetPasswordMenu = menu; document.getElementById('input-password').value = ''; document.getElementById('password-error').classList.add('hidden'); document.getElementById('password-modal').classList.remove('hidden'); setTimeout(() => document.getElementById('input-password').focus(), 100); }
     function closePasswordModal() { document.getElementById('password-modal').classList.add('hidden'); }
+    function submitPassword() { const inputVal = document.getElementById('input-password').value; if(inputVal === globalAppPin) { closePasswordModal(); nav(targetPasswordMenu); } else { document.getElementById('password-error').classList.remove('hidden'); document.getElementById('input-password').value = ''; document.getElementById('input-password').focus(); } }
 
-    function submitPassword() {
-      const inputVal = document.getElementById('input-password').value;
-      if(inputVal === globalAppPin) {
-        closePasswordModal();
-        nav(targetPasswordMenu);
-      } else {
-        document.getElementById('password-error').classList.remove('hidden');
-        document.getElementById('input-password').value = '';
-        document.getElementById('input-password').focus();
-      }
-    }
+    let sysConfirmCallback = null;
+    function showAlert(message) { document.getElementById('sys-modal').classList.remove('hidden'); document.getElementById('sys-modal-title').innerText = 'Informasi'; document.getElementById('sys-modal-message').innerText = message; document.getElementById('sys-modal-cancel').classList.add('hidden'); sysConfirmCallback = null; }
+    function showConfirm(message, callback) { document.getElementById('sys-modal').classList.remove('hidden'); document.getElementById('sys-modal-title').innerText = 'Konfirmasi'; document.getElementById('sys-modal-message').innerText = message; document.getElementById('sys-modal-cancel').classList.remove('hidden'); sysConfirmCallback = callback; }
+    function handleSysOk() { document.getElementById('sys-modal').classList.add('hidden'); if (sysConfirmCallback) { sysConfirmCallback(); sysConfirmCallback = null; } }
+    function handleSysCancel() { document.getElementById('sys-modal').classList.add('hidden'); sysConfirmCallback = null; }
 
-    // Modal Tunggal yang sudah diperbaiki id dan strukturnya
-    function showAlert(message) {
-      document.getElementById('custom-modal').classList.remove('hidden'); 
-      document.getElementById('modal-title').innerText = 'Informasi'; 
-      document.getElementById('modal-message').innerText = message;
-      document.getElementById('modal-btn-cancel').classList.add('hidden'); 
-      document.getElementById('modal-btn-ok').onclick = function() { closeModal(); };
-    }
-    
-    function showConfirm(message, onConfirmCallback) {
-      document.getElementById('custom-modal').classList.remove('hidden'); 
-      document.getElementById('modal-title').innerText = 'Konfirmasi'; 
-      document.getElementById('modal-message').innerText = message;
-      document.getElementById('modal-btn-cancel').classList.remove('hidden'); 
-      document.getElementById('modal-btn-ok').onclick = function() { closeModal(); if(onConfirmCallback) onConfirmCallback(); };
-    }
-    
-    function closeModal() { document.getElementById('custom-modal').classList.add('hidden'); }
     function formatRp(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); }
     function nav(viewId) { document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden')); document.getElementById('view-' + viewId).classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
@@ -440,35 +419,33 @@
       selectEl.innerHTML = options;
 
       opapSatkerSelect = new TomSelect("#opap-income-satker", { create: false, sortField: { field: "text", direction: "asc" }, onChange: function(value) { loadOpapIncomeNames(); } });
+      
+      let dateObj = new Date();
+      document.getElementById('opap-income-bulan').value = (dateObj.getMonth() + 1).toString();
+      document.getElementById('opap-income-tanggal').valueAsDate = dateObj;
     }
 
     function loadOpapIncomeNames() {
-      const satker = document.getElementById('opap-income-satker').value; 
-      const listDiv = document.getElementById('opap-income-list');
-      
+      const satker = document.getElementById('opap-income-satker').value; const listDiv = document.getElementById('opap-income-list');
       const isValid = globalOpapMaster.some(item => item.satker === satker);
       if(!isValid) { document.getElementById('opap-names-container').classList.add('hidden'); return; }
       
       const names = globalOpapMaster.filter(item => item.satker === satker).sort((a, b) => a.nama.localeCompare(b.nama));
       let html = ''; 
       names.forEach((item) => { html += `<div class="flex justify-between items-center bg-white p-3 border border-slate-200 rounded-lg"><div class="font-bold text-slate-700">${item.nama}</div><div class="w-1/2"><input type="number" data-nama="${item.nama}" class="opap-indiv-nominal win-input bg-slate-50" placeholder="Rp"></div></div>`; });
-      listDiv.innerHTML = html; 
-      document.getElementById('opap-names-container').classList.remove('hidden');
+      listDiv.innerHTML = html; document.getElementById('opap-names-container').classList.remove('hidden');
 
-      if(names.length > 1) {
-          document.getElementById('opap-bulk-wrapper').classList.remove('hidden');
-      } else {
-          document.getElementById('opap-bulk-wrapper').classList.add('hidden');
-      }
+      if(names.length > 1) { document.getElementById('opap-bulk-wrapper').classList.remove('hidden'); } else { document.getElementById('opap-bulk-wrapper').classList.add('hidden'); }
     }
     
     function applyOpapBulkNominal() { const bulkVal = document.getElementById('opap-bulk-nominal').value; document.querySelectorAll('.opap-indiv-nominal').forEach(input => input.value = bulkVal); }
     
     async function submitOpapIncome() {
-      const tanggal = document.getElementById('opap-income-tanggal').value; const satker = document.getElementById('opap-income-satker').value; const metode = document.getElementById('opap-income-metode').value;
-      if(!tanggal || !satker) return showAlert('Isi Tanggal dan Satker!');
+      const tanggal = document.getElementById('opap-income-tanggal').value; const satker = document.getElementById('opap-income-satker').value; const metode = document.getElementById('opap-income-metode').value; const untukBulan = document.getElementById('opap-income-bulan').value;
+      if(!tanggal || !satker || !untukBulan) return showAlert('Isi Satker, Tanggal, dan Bulan!');
       let dataToSave = []; document.querySelectorAll('.opap-indiv-nominal').forEach(input => dataToSave.push({ nama: input.getAttribute('data-nama'), nominal: input.value }));
-      const msg = await fetchAPI('saveOpapIncome', { tanggal, satker, dataNominal: dataToSave, metode: metode });
+      
+      const msg = await fetchAPI('saveOpapIncome', { tanggal, untukBulan, satker, dataNominal: dataToSave, metode });
       if(msg) { 
           showAlert(msg); 
           if(opapSatkerSelect) opapSatkerSelect.clear();
@@ -481,8 +458,7 @@
     async function openOpapRekap() {
       nav('opap-rekap'); 
       document.getElementById('opap-rekap-list').innerHTML = '<tr><td colspan="4" class="text-center py-4">Memuat data...</td></tr>'; 
-      document.getElementById('opap-tunggakan-list').innerHTML = '';
-      document.getElementById('opap-metode-list').innerHTML = '';
+      document.getElementById('opap-tunggakan-list').innerHTML = ''; document.getElementById('opap-metode-list').innerHTML = '';
       
       const data = await fetchAPI('getRekapOpap'); if(!data) return; globalRekapOpap = data;
       document.getElementById('filter-tahun-opap').innerHTML = getYearOptions();
@@ -509,10 +485,9 @@
       if (filterBulanActive) expectedMonths = [parseInt(bulanFilter)];
 
       let filteredIncome = globalRekapOpap.income.filter(inc => {
-        if(!inc.tanggal) return false;
-        let d = new Date(inc.tanggal);
+        if(!inc.tanggal) return false; let d = new Date(inc.tanggal);
         if(d.getFullYear() !== tahun) return false;
-        if(filterBulanActive && (d.getMonth() + 1) !== parseInt(bulanFilter)) return false;
+        if(filterBulanActive && inc.untukBulan !== parseInt(bulanFilter)) return false;
         return true;
       });
 
@@ -520,8 +495,7 @@
       filteredIncome.forEach(inc => {
           let m = inc.metode || 'TUNAI';
           if (!metodeGroups[m]) metodeGroups[m] = { count: 0, total: 0 };
-          metodeGroups[m].count++;
-          metodeGroups[m].total += (parseFloat(inc.nominal) || 0);
+          metodeGroups[m].count++; metodeGroups[m].total += (parseFloat(inc.nominal) || 0);
       });
 
       let htmlMetode = ''; let grandTotalMetode = 0;
@@ -537,9 +511,9 @@
 
       globalRekapOpap.master.forEach(m => {
         let personIncomesAllYear = globalRekapOpap.income.filter(inc => inc.nama === m.nama && inc.satker === m.satker && inc.tanggal && new Date(inc.tanggal).getFullYear() === tahun);
-        let personIncomesFiltered = personIncomesAllYear.filter(inc => !filterBulanActive || (new Date(inc.tanggal).getMonth() + 1) === parseInt(bulanFilter));
+        let personIncomesFiltered = personIncomesAllYear.filter(inc => !filterBulanActive || inc.untukBulan === parseInt(bulanFilter));
         
-        let paidMonths = [...new Set(personIncomesAllYear.map(inc => new Date(inc.tanggal).getMonth() + 1))];
+        let paidMonths = [...new Set(personIncomesAllYear.map(inc => inc.untukBulan))];
         let missingMonths = expectedMonths.filter(em => !paidMonths.includes(em));
         
         let totalPaid = 0; let metodes = new Set();
@@ -612,12 +586,16 @@
       selectEl.innerHTML = options;
 
       opraSatkerSelect = new TomSelect("#opra-income-satker", { create: false, sortField: { field: "text", direction: "asc" } });
+
+      let dateObj = new Date();
+      document.getElementById('opra-income-bulan').value = (dateObj.getMonth() + 1).toString();
+      document.getElementById('opra-income-tanggal').valueAsDate = dateObj;
     }
 
     async function submitOpraIncome() {
-      const tanggal = document.getElementById('opra-income-tanggal').value; const satker = document.getElementById('opra-income-satker').value; const nominal = document.getElementById('opra-income-nominal').value; const metode = document.getElementById('opra-income-metode').value;
-      if(!tanggal || !satker || !nominal) return showAlert('Lengkapi semua data!');
-      const msg = await fetchAPI('saveOpraIncome', { tanggal, satker, nominal, metode });
+      const tanggal = document.getElementById('opra-income-tanggal').value; const satker = document.getElementById('opra-income-satker').value; const nominal = document.getElementById('opra-income-nominal').value; const metode = document.getElementById('opra-income-metode').value; const untukBulan = document.getElementById('opra-income-bulan').value;
+      if(!tanggal || !satker || !nominal || !untukBulan) return showAlert('Lengkapi semua data!');
+      const msg = await fetchAPI('saveOpraIncome', { tanggal, untukBulan, satker, nominal, metode });
       if(msg) { showAlert(msg); if(opraSatkerSelect) opraSatkerSelect.clear(); document.getElementById('opra-income-nominal').value = ''; window.scrollTo({ top: 0, behavior: 'smooth' }); }
     }
 
@@ -631,18 +609,16 @@
     function renderRekapOpra() {
       const tahun = parseInt(document.getElementById('filter-tahun-opra').value);
       const bulanFilter = document.getElementById('filter-bulan-opra').value;
-      let expectedMonths = getExpectedMonths(tahun);
       let filterBulanActive = bulanFilter !== 'all';
-      if (filterBulanActive) expectedMonths = [parseInt(bulanFilter)];
 
       let filteredIncome = globalRekapOpra.income.filter(inc => {
-        if(!inc.tanggal) return false;
-        let d = new Date(inc.tanggal);
+        if(!inc.tanggal) return false; let d = new Date(inc.tanggal);
         if(d.getFullYear() !== tahun) return false;
-        if(filterBulanActive && (d.getMonth() + 1) !== parseInt(bulanFilter)) return false;
+        if(filterBulanActive && inc.untukBulan !== parseInt(bulanFilter)) return false;
         return true;
       });
 
+      // Proses Rekap Metode (OP-RA)
       let metodeGroups = {};
       filteredIncome.forEach(inc => {
           let m = inc.metode || 'TUNAI';
@@ -659,29 +635,26 @@
       htmlMetode += `<tr class="bg-slate-100 font-bold"><td colspan="2" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotalMetode)}</td></tr>`;
       document.getElementById('opra-metode-list').innerHTML = Object.keys(metodeGroups).length > 0 ? htmlMetode : '<tr><td colspan="3" class="text-center py-4">Data kosong.</td></tr>';
 
-      let htmlSatker = ''; let htmlTunggakan = ''; let grandTotalSatker = 0;
+      // Proses Rekap Utama (OP-RA) - TANPA TUNGGAKAN
+      let htmlSatker = ''; let grandTotalSatker = 0;
 
       globalRekapOpra.master.sort((a,b)=>a.satker.localeCompare(b.satker)).forEach(m => {
         let satkerIncomesAllYear = globalRekapOpra.income.filter(inc => inc.satker === m.satker && inc.tanggal && new Date(inc.tanggal).getFullYear() === tahun);
-        let satkerIncomesFiltered = satkerIncomesAllYear.filter(inc => !filterBulanActive || (new Date(inc.tanggal).getMonth() + 1) === parseInt(bulanFilter));
+        let satkerIncomesFiltered = satkerIncomesAllYear.filter(inc => !filterBulanActive || inc.untukBulan === parseInt(bulanFilter));
 
-        let paidMonths = [...new Set(satkerIncomesAllYear.map(inc => new Date(inc.tanggal).getMonth() + 1))];
-        let missingMonths = expectedMonths.filter(em => !paidMonths.includes(em));
-        
         let totalNominal = 0; let metodes = new Set();
         satkerIncomesFiltered.forEach(inc => { totalNominal += (parseFloat(inc.nominal) || 0); metodes.add(inc.metode || 'TUNAI'); });
 
-        let isLunas = missingMonths.length === 0; grandTotalSatker += totalNominal;
-        let badge = isLunas ? `<span class="badge badge-lunas">Lunas</span>` : `<span class="badge badge-belum">Belum</span>`;
-        let desc = isLunas ? `<span class="text-xs text-slate-400 block">${Array.from(metodes).join(', ')}</span>` : `<span class="text-xs text-red-500 italic block">Tunggakan: ${missingMonths.map(mm=>monthNames[mm-1]).join(', ')}</span>`;
+        grandTotalSatker += totalNominal;
+        let hasPayment = totalNominal > 0;
+        let badge = hasPayment ? `<span class="badge badge-lunas">Ada Setoran</span>` : `<span class="badge bg-slate-200 text-slate-500">Nihil</span>`;
+        let desc = hasPayment ? `<span class="text-xs text-slate-400 block">Metode: ${Array.from(metodes).join(', ')}</span>` : ``;
 
         htmlSatker += `<tr class="border-b"><td class="font-bold text-slate-700 py-3">${m.satker}${desc}</td><td>${badge}</td><td class="font-bold text-emerald-600">${formatRp(totalNominal)}</td></tr>`;
-        if (!isLunas && expectedMonths.length > 0) htmlTunggakan += `<tr class="border-b hover:bg-slate-50"><td class="font-medium text-slate-700">${m.satker}</td><td class="text-red-500 font-semibold">${missingMonths.map(mm=>monthNames[mm-1]).join(', ')}</td></tr>`;
       });
       
       htmlSatker += `<tr class="bg-slate-100 font-bold"><td colspan="2" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotalSatker)}</td></tr>`;
       document.getElementById('opra-rekap-list').innerHTML = htmlSatker || '<tr><td colspan="3" class="text-center py-4">Data kosong.</td></tr>';
-      document.getElementById('opra-tunggakan-list').innerHTML = htmlTunggakan || '<tr><td colspan="2" class="text-center py-4 text-emerald-600 font-semibold">Semua Lunas! Tidak ada tunggakan.</td></tr>';
     }
   </script>
 </body>
