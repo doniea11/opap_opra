@@ -49,19 +49,41 @@
     .ts-dropdown .option:hover, .ts-dropdown .active { background-color: #f0f9ff !important; color: #0067c0 !important; }
     .ts-wrapper.single .ts-control:after { border-color: #64748b transparent transparent transparent !important; }
     
-    /* Supaya tab bisa di-scroll menyamping di HP */
+    /* Scroll tab HP */
     .tab-scroll { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
     .tab-scroll::-webkit-scrollbar { height: 4px; }
   </style>
 </head>
 <body class="text-slate-800 h-screen flex flex-col relative overflow-x-hidden">
 
+  <!-- LOADING OVERLAY -->
   <div id="loading-overlay" class="hidden fixed inset-0 bg-white/80 backdrop-blur-sm z-[60] flex flex-col items-center justify-center">
     <div class="loader mb-4"></div>
     <p class="text-slate-600 font-semibold animate-pulse">Memproses Data...</p>
   </div>
 
-  <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-40 z-50 flex items-center justify-center modal-overlay p-4">
+  <!-- PASSWORD MODAL OVERLAY -->
+  <div id="password-modal" class="hidden fixed inset-0 bg-slate-900/60 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all modal-content">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <h3 class="text-lg font-bold text-[#0067c0]">Otorisasi Keamanan</h3>
+        <button onclick="closePasswordModal()" class="text-slate-400 hover:text-red-500">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="px-6 py-8 text-center">
+        <p class="text-slate-700 font-bold mb-4 uppercase tracking-wide text-sm">SILAHKAN MASUKKAN PASSWORD !!!</p>
+        <input type="password" id="input-password" class="win-input text-center text-3xl tracking-[0.3em] font-mono py-3" placeholder="••••••" onkeypress="if(event.key === 'Enter') submitPassword()">
+        <p id="password-error" class="text-red-500 text-sm mt-3 hidden font-bold animate-pulse">Password Salah!</p>
+      </div>
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100">
+        <button onclick="submitPassword()" class="win-btn w-full py-3.5 text-sm font-bold shadow-md hover:shadow-lg">BUKA AKSES</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFORMASI MODAL -->
+  <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-40 z-[80] flex items-center justify-center modal-overlay p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden modal-content">
       <div class="px-6 py-4 border-b border-slate-100"><h3 id="modal-title" class="text-lg font-bold text-slate-800">Informasi</h3></div>
       <div class="px-6 py-6"><p id="modal-message" class="text-slate-600 text-sm md:text-base leading-relaxed"></p></div>
@@ -72,6 +94,7 @@
     </div>
   </div>
 
+  <!-- HEADER -->
   <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md shadow-sm p-4 flex items-center justify-between border-b border-slate-200">
     <div class="flex items-center gap-2">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#0067c0]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
@@ -85,14 +108,15 @@
 
   <main class="p-4 sm:p-6 flex-1 max-w-5xl mx-auto w-full pb-20">
     
+    <!-- HOME -->
     <div id="view-home" class="view-section flex flex-col sm:flex-row gap-8 sm:gap-16 justify-center mt-12 sm:mt-24 items-center">
-      <button onclick="nav('opap-menu')" class="win-card btn-circle w-48 h-48 sm:w-56 sm:h-56 rounded-full flex flex-col items-center justify-center cursor-pointer border-4 border-transparent hover:border-[#0067c0] transition-all bg-white shadow-lg">
+      <button onclick="requirePassword('opap-menu')" class="win-card btn-circle w-48 h-48 sm:w-56 sm:h-56 rounded-full flex flex-col items-center justify-center cursor-pointer border-4 border-transparent hover:border-[#0067c0] transition-all bg-white shadow-lg">
         <svg xmlns="http://www.w3.org/2000/svg" class="ball-icon w-14 h-14 sm:w-16 sm:h-16 mb-2 sm:mb-3 text-[#0067c0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 12l3-2.5-1-4.5H10l-1 4.5z"></path><path d="M12 12l-4 2-2-3"></path><path d="M15 9.5l5-1.5"></path><path d="M12 12l2 4 4 1"></path><path d="M8 14l-4 1"></path><path d="M14 16l-1 4"></path><path d="M10 16l1 4"></path></svg>
         <span class="text-2xl sm:text-3xl font-bold text-[#0067c0] mb-1">OP-AP</span>
         <span class="text-slate-400 text-xs sm:text-sm font-medium">Perorangan</span>
       </button>
 
-      <button onclick="nav('opra-menu')" class="win-card btn-circle w-48 h-48 sm:w-56 sm:h-56 rounded-full flex flex-col items-center justify-center cursor-pointer border-4 border-transparent hover:border-[#0067c0] transition-all bg-white shadow-lg">
+      <button onclick="requirePassword('opra-menu')" class="win-card btn-circle w-48 h-48 sm:w-56 sm:h-56 rounded-full flex flex-col items-center justify-center cursor-pointer border-4 border-transparent hover:border-[#0067c0] transition-all bg-white shadow-lg">
         <svg xmlns="http://www.w3.org/2000/svg" class="ball-icon w-14 h-14 sm:w-16 sm:h-16 mb-2 sm:mb-3 text-[#0067c0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 12l3-2.5-1-4.5H10l-1 4.5z"></path><path d="M12 12l-4 2-2-3"></path><path d="M15 9.5l5-1.5"></path><path d="M12 12l2 4 4 1"></path><path d="M8 14l-4 1"></path><path d="M14 16l-1 4"></path><path d="M10 16l1 4"></path></svg>
         <span class="text-2xl sm:text-3xl font-bold text-[#0067c0] mb-1">OP-RA</span>
         <span class="text-slate-400 text-xs sm:text-sm font-medium">Lembaga</span>
@@ -126,7 +150,10 @@
         <button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker (Ketik untuk mencari)</label><select id="opap-income-satker" class="win-input"></select></div>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker (Ketik untuk mencari)</label>
+          <select id="opap-income-satker" class="win-input"></select>
+        </div>
         <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tanggal Input</label><input type="date" id="opap-income-tanggal" class="win-input"></div>
         <div><label class="block text-xs font-semibold mb-1 text-slate-500">Metode Pembayaran</label>
           <select id="opap-income-metode" class="win-input bg-white">
@@ -136,7 +163,7 @@
         </div>
       </div>
       <div id="opap-names-container" class="hidden mt-6">
-        <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl mb-5 flex flex-col sm:flex-row gap-3">
+        <div id="opap-bulk-wrapper" class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl mb-5 flex flex-col sm:flex-row gap-3">
           <div class="w-full"><label class="block text-xs font-bold text-indigo-800 mb-1">Isi nominal serentak:</label><input type="number" id="opap-bulk-nominal" class="win-input bg-white"></div>
           <button onclick="applyOpapBulkNominal()" class="win-btn bg-indigo-600 px-5 py-2 h-[42px] mt-auto text-sm">Terapkan Semua</button>
         </div>
@@ -171,7 +198,8 @@
             <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
           </select>
         </div>
-        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Satker (Ketik untuk mencari)</label>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">Satker (Ketik untuk mencari)</label>
           <select id="filter-satker-opap" class="win-input bg-white"></select>
         </div>
       </div>
@@ -223,7 +251,10 @@
     <div id="view-opra-income" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
       <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Input Setoran OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
       <div class="space-y-5">
-        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker (Ketik untuk mencari)</label><select id="opra-income-satker" class="win-input"></select></div>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker (Ketik untuk mencari)</label>
+          <select id="opra-income-satker" class="win-input"></select>
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tanggal Setor</label><input type="date" id="opra-income-tanggal" class="win-input"></div>
           <div><label class="block text-xs font-semibold mb-1 text-slate-500">Nominal (Rp)</label><input type="number" id="opra-income-nominal" class="win-input"></div>
@@ -251,7 +282,7 @@
         <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tahun</label>
           <select id="filter-tahun-opra" class="win-input bg-white" onchange="renderRekapOpra()"></select>
         </div>
-        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Bulan</label>
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Bulan (Hanya u/ Rekap Utama)</label>
           <select id="filter-bulan-opra" class="win-input bg-white" onchange="renderRekapOpra()">
             <option value="all">Semua Bulan (Total Tahunan)</option>
             <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
@@ -283,7 +314,7 @@
     // ==========================================
     // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI BAWAH INI
     // ==========================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzdVEjJqzp4ruIbeUry4rlNwtlyX3kNfm6YFJCDNfZm0tQEtCM92wcng1yEgF__ehxKrg/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbw25ZMzYkjVdJ3R2Q15CBJX83iVfdM3vsVNkUN1iCMu0DhDZppjTbRZMM5ChX1hrsS1gQ/exec'; 
     
     let globalOpapMaster = []; 
     let globalRekapOpap = { master: [], income: [] };
@@ -293,6 +324,15 @@
     let opapSatkerSelect;
     let opraSatkerSelect;
     let opapRekapSatkerSelect;
+    
+    let globalAppPin = "122009";
+    let targetPasswordMenu = "";
+
+    // Ambil PIN secara diam-diam saat halaman dimuat
+    window.addEventListener('DOMContentLoaded', async () => {
+      const pin = await fetchAPI('getAppPin', {}, false);
+      if(pin !== null && pin !== undefined) globalAppPin = pin.toString();
+    });
 
     function getYearOptions() {
       let currentYear = new Date().getFullYear(); let html = '';
@@ -326,16 +366,39 @@
       document.getElementById(`content-opra-${tab}`).classList.remove('hidden');
     }
 
-    async function fetchAPI(action, data = {}) {
-      if(!API_URL || API_URL.includes('MASUKKAN_URL')) { showAlert("URL API belum disetting di kode HTML!"); return null; }
-      document.getElementById('loading-overlay').classList.remove('hidden');
+    async function fetchAPI(action, data = {}, showLoading = true) {
+      if(!API_URL || API_URL.includes('MASUKKAN_URL')) { if(showLoading) showAlert("URL API belum disetting di kode HTML!"); return null; }
+      if(showLoading) document.getElementById('loading-overlay').classList.remove('hidden');
       try {
         const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: action, ...data }) });
         const result = await response.json();
-        document.getElementById('loading-overlay').classList.add('hidden');
-        if (result.status === 'success') return result.data; else { showAlert("Error: " + result.message); return null; }
+        if(showLoading) document.getElementById('loading-overlay').classList.add('hidden');
+        if (result.status === 'success') return result.data; else { if(showLoading) showAlert("Error: " + result.message); return null; }
       } catch (error) {
-        document.getElementById('loading-overlay').classList.add('hidden'); showAlert("Gagal menghubungi server."); return null;
+        if(showLoading) { document.getElementById('loading-overlay').classList.add('hidden'); showAlert("Gagal menghubungi server."); }
+        return null;
+      }
+    }
+
+    function requirePassword(menu) {
+      targetPasswordMenu = menu;
+      document.getElementById('input-password').value = '';
+      document.getElementById('password-error').classList.add('hidden');
+      document.getElementById('password-modal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('input-password').focus(), 100);
+    }
+
+    function closePasswordModal() { document.getElementById('password-modal').classList.add('hidden'); }
+
+    function submitPassword() {
+      const inputVal = document.getElementById('input-password').value;
+      if(inputVal === globalAppPin) {
+        closePasswordModal();
+        nav(targetPasswordMenu);
+      } else {
+        document.getElementById('password-error').classList.remove('hidden');
+        document.getElementById('input-password').value = '';
+        document.getElementById('input-password').focus();
       }
     }
 
@@ -347,7 +410,6 @@
       document.getElementById('custom-modal').classList.remove('hidden'); document.getElementById('modal-title').innerText = 'Konfirmasi'; document.getElementById('modal-message').innerText = message;
       document.getElementById('modal-btn-cancel').classList.remove('hidden'); document.getElementById('modal-btn-ok').onclick = function() { closeModal(); if(onConfirmCallback) onConfirmCallback(); };
     }
-    function closeModal() { document.getElementById('custom-modal').classList.add('hidden'); }
     function formatRp(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); }
     function nav(viewId) { document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden')); document.getElementById('view-' + viewId).classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
@@ -387,13 +449,23 @@
     }
 
     function loadOpapIncomeNames() {
-      const satker = document.getElementById('opap-income-satker').value; const listDiv = document.getElementById('opap-income-list');
-      if(!satker) { document.getElementById('opap-names-container').classList.add('hidden'); return; }
+      const satker = document.getElementById('opap-income-satker').value; 
+      const listDiv = document.getElementById('opap-income-list');
+      
+      const isValid = globalOpapMaster.some(item => item.satker === satker);
+      if(!isValid) { document.getElementById('opap-names-container').classList.add('hidden'); return; }
       
       const names = globalOpapMaster.filter(item => item.satker === satker).sort((a, b) => a.nama.localeCompare(b.nama));
       let html = ''; 
       names.forEach((item) => { html += `<div class="flex justify-between items-center bg-white p-3 border border-slate-200 rounded-lg"><div class="font-bold text-slate-700">${item.nama}</div><div class="w-1/2"><input type="number" data-nama="${item.nama}" class="opap-indiv-nominal win-input bg-slate-50" placeholder="Rp"></div></div>`; });
-      listDiv.innerHTML = html; document.getElementById('opap-names-container').classList.remove('hidden');
+      listDiv.innerHTML = html; 
+      document.getElementById('opap-names-container').classList.remove('hidden');
+
+      if(names.length > 1) {
+          document.getElementById('opap-bulk-wrapper').classList.remove('hidden');
+      } else {
+          document.getElementById('opap-bulk-wrapper').classList.add('hidden');
+      }
     }
     
     function applyOpapBulkNominal() { const bulkVal = document.getElementById('opap-bulk-nominal').value; document.querySelectorAll('.opap-indiv-nominal').forEach(input => input.value = bulkVal); }
@@ -403,7 +475,13 @@
       if(!tanggal || !satker) return showAlert('Isi Tanggal dan Satker!');
       let dataToSave = []; document.querySelectorAll('.opap-indiv-nominal').forEach(input => dataToSave.push({ nama: input.getAttribute('data-nama'), nominal: input.value }));
       const msg = await fetchAPI('saveOpapIncome', { tanggal, satker, dataNominal: dataToSave, metode: metode });
-      if(msg) { showAlert(msg); if(opapSatkerSelect) opapSatkerSelect.clear(); document.getElementById('opap-bulk-nominal').value = ''; document.getElementById('opap-names-container').classList.add('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      if(msg) { 
+          showAlert(msg); 
+          if(opapSatkerSelect) opapSatkerSelect.clear();
+          document.getElementById('opap-bulk-nominal').value = ''; 
+          document.getElementById('opap-names-container').classList.add('hidden'); 
+          window.scrollTo({ top: 0, behavior: 'smooth' }); 
+      }
     }
 
     async function openOpapRekap() {
@@ -419,7 +497,7 @@
       let selectEl = document.getElementById('filter-satker-opap');
       if(opapRekapSatkerSelect) opapRekapSatkerSelect.destroy();
 
-      let options = '<option value="all">Semua Satker</option>'; 
+      let options = '<option value="">Semua Satker (Tampilkan Semua)</option>'; 
       satkers.forEach(s => options += `<option value="${s}">${s}</option>`);
       selectEl.innerHTML = options;
 
@@ -444,7 +522,6 @@
         return true;
       });
 
-      // Proses Rekap Metode
       let metodeGroups = {};
       filteredIncome.forEach(inc => {
           let m = inc.metode || 'TUNAI';
@@ -461,7 +538,6 @@
       htmlMetode += `<tr class="bg-slate-100 font-bold"><td colspan="2" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotalMetode)}</td></tr>`;
       document.getElementById('opap-metode-list').innerHTML = Object.keys(metodeGroups).length > 0 ? htmlMetode : '<tr><td colspan="3" class="text-center py-4">Data kosong.</td></tr>';
 
-      // Proses Rekap Satker & Tunggakan
       let satkerGroups = {};
       globalRekapOpap.master.forEach(m => { if (!satkerGroups[m.satker]) satkerGroups[m.satker] = { satker: m.satker, people: [], totalNominal: 0, lunasCount: 0 }; });
 
@@ -486,7 +562,7 @@
       let htmlSatker = ''; let htmlTunggakan = ''; let index = 0; let grandTotalSatker = 0;
 
       Object.values(satkerGroups).sort((a,b)=>a.satker.localeCompare(b.satker)).forEach(sg => {
-        if(satkerFilter !== 'all' && satkerFilter !== '' && sg.satker !== satkerFilter) return;
+        if(satkerFilter && satkerFilter !== '' && sg.satker !== satkerFilter) return;
         index++; grandTotalSatker += sg.totalNominal;
         let isSatkerLunas = sg.lunasCount === sg.people.length && sg.people.length > 0;
         let badgeSatker = isSatkerLunas ? `<span class="badge badge-lunas">Lunas</span>` : `<span class="badge badge-belum">Belum</span>`;
@@ -573,7 +649,6 @@
         return true;
       });
 
-      // Proses Rekap Metode
       let metodeGroups = {};
       filteredIncome.forEach(inc => {
           let m = inc.metode || 'TUNAI';
@@ -590,7 +665,6 @@
       htmlMetode += `<tr class="bg-slate-100 font-bold"><td colspan="2" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotalMetode)}</td></tr>`;
       document.getElementById('opra-metode-list').innerHTML = Object.keys(metodeGroups).length > 0 ? htmlMetode : '<tr><td colspan="3" class="text-center py-4">Data kosong.</td></tr>';
 
-      // Proses Rekap Satker & Tunggakan
       let htmlSatker = ''; let htmlTunggakan = ''; let grandTotalSatker = 0;
 
       globalRekapOpra.master.sort((a,b)=>a.satker.localeCompare(b.satker)).forEach(m => {
