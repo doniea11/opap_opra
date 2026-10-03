@@ -6,7 +6,6 @@
   <title>Sistem Input Pemasukan</title>
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Tom Select Library untuk Dropdown Pencarian -->
   <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
@@ -41,15 +40,13 @@
     .loader { border: 4px solid #f3f3f3; border-top: 4px solid #0067c0; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* Customisasi Tom Select */
     .ts-control { border: 1px solid #cbd5e1 !important; border-radius: 6px !important; border-bottom: 2px solid #0067c0 !important; padding: 10px 14px !important; font-size: 16px !important; background-color: white !important; box-shadow: none !important; min-height: 46px; display: flex; align-items: center; }
     .ts-control.focus { background-color: #f0f9ff !important; border-color: #0067c0 !important; }
-    .ts-dropdown { border-radius: 8px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; border: 1px solid #e2e8f0 !important; font-size: 14px !important; margin-top: 4px !important; }
+    .ts-dropdown { border-radius: 8px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; border: 1px solid #e2e8f0 !important; font-size: 14px !important; margin-top: 4px !important; z-index: 50 !important; }
     .ts-dropdown .option { padding: 10px 14px !important; }
     .ts-dropdown .option:hover, .ts-dropdown .active { background-color: #f0f9ff !important; color: #0067c0 !important; }
     .ts-wrapper.single .ts-control:after { border-color: #64748b transparent transparent transparent !important; }
     
-    /* Scroll tab HP */
     .tab-scroll { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
     .tab-scroll::-webkit-scrollbar { height: 4px; }
   </style>
@@ -62,7 +59,7 @@
     <p class="text-slate-600 font-semibold animate-pulse">Memproses Data...</p>
   </div>
 
-  <!-- PASSWORD MODAL OVERLAY -->
+  <!-- PASSWORD MODAL -->
   <div id="password-modal" class="hidden fixed inset-0 bg-slate-900/60 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all modal-content">
       <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -82,11 +79,11 @@
     </div>
   </div>
 
-  <!-- INFORMASI MODAL -->
+  <!-- SATU-SATUNYA INFORMASI MODAL (TIDAK ADA DUPLIKAT LAGI) -->
   <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-40 z-[80] flex items-center justify-center modal-overlay p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden modal-content">
       <div class="px-6 py-4 border-b border-slate-100"><h3 id="modal-title" class="text-lg font-bold text-slate-800">Informasi</h3></div>
-      <div class="px-6 py-6"><p id="modal-message" class="text-slate-600 text-sm md:text-base leading-relaxed"></p></div>
+      <div class="px-6 py-6 whitespace-pre-wrap"><p id="modal-message" class="text-slate-600 text-sm md:text-base leading-relaxed"></p></div>
       <div class="px-6 py-4 bg-slate-50 flex justify-end gap-3 border-t border-slate-100">
         <button id="modal-btn-cancel" class="win-btn-outline px-5 py-2.5 text-sm font-semibold hidden w-full sm:w-auto" onclick="closeModal()">Batal</button>
         <button id="modal-btn-ok" class="win-btn px-5 py-2.5 text-sm font-semibold w-full sm:w-auto shadow-md">Oke</button>
@@ -205,26 +202,17 @@
       </div>
 
       <div id="content-opap-satker" class="table-container">
-        <table>
-          <thead><tr><th>Nama Satker</th><th>Status</th><th>Progres</th><th>Total Terkumpul</th></tr></thead>
-          <tbody id="opap-rekap-list"></tbody>
-        </table>
+        <table><thead><tr><th>Nama Satker</th><th>Status</th><th>Progres</th><th>Total Terkumpul</th></tr></thead><tbody id="opap-rekap-list"></tbody></table>
       </div>
 
       <div id="content-opap-metode" class="table-container hidden">
         <div class="bg-indigo-50 text-indigo-700 p-3 text-sm mb-4 rounded-lg">Rincian pendapatan berdasarkan metode pembayaran sesuai Tahun & Bulan yang dipilih di atas.</div>
-        <table>
-          <thead><tr><th>Metode Pembayaran</th><th>Jumlah Transaksi</th><th>Total Nominal</th></tr></thead>
-          <tbody id="opap-metode-list"></tbody>
-        </table>
+        <table><thead><tr><th>Metode Pembayaran</th><th>Jumlah Transaksi</th><th>Total Nominal</th></tr></thead><tbody id="opap-metode-list"></tbody></table>
       </div>
 
       <div id="content-opap-tunggakan" class="table-container hidden">
         <div class="bg-red-50 text-red-700 p-3 text-sm mb-4 rounded-lg">Menampilkan rincian tunggakan kewajiban pembayaran dari awal tahun hingga bulan berjalan.</div>
-        <table>
-          <thead><tr><th>Nama</th><th>Satker</th><th>Bulan Belum Bayar</th></tr></thead>
-          <tbody id="opap-tunggakan-list"></tbody>
-        </table>
+        <table><thead><tr><th>Nama</th><th>Satker</th><th>Bulan Belum Bayar</th></tr></thead><tbody id="opap-tunggakan-list"></tbody></table>
       </div>
     </div>
 
@@ -293,15 +281,10 @@
         </div>
       </div>
 
-      <div id="content-opra-utama" class="table-container">
-        <table><thead><tr><th>Nama Satker</th><th>Status Bayar</th><th>Total Nominal</th></tr></thead><tbody id="opra-rekap-list"></tbody></table>
-      </div>
+      <div id="content-opra-utama" class="table-container"><table><thead><tr><th>Nama Satker</th><th>Status Bayar</th><th>Total Nominal</th></tr></thead><tbody id="opra-rekap-list"></tbody></table></div>
       <div id="content-opra-metode" class="table-container hidden">
         <div class="bg-indigo-50 text-indigo-700 p-3 text-sm mb-4 rounded-lg">Rincian pendapatan berdasarkan metode pembayaran sesuai Tahun & Bulan yang dipilih di atas.</div>
-        <table>
-          <thead><tr><th>Metode Pembayaran</th><th>Jumlah Transaksi</th><th>Total Nominal</th></tr></thead>
-          <tbody id="opra-metode-list"></tbody>
-        </table>
+        <table><thead><tr><th>Metode Pembayaran</th><th>Jumlah Transaksi</th><th>Total Nominal</th></tr></thead><tbody id="opra-metode-list"></tbody></table>
       </div>
       <div id="content-opra-tunggakan" class="table-container hidden">
         <div class="bg-red-50 text-red-700 p-3 text-sm mb-4 rounded-lg">Rincian tunggakan lembaga.</div>
@@ -314,7 +297,7 @@
     // ==========================================
     // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI BAWAH INI
     // ==========================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbw25ZMzYkjVdJ3R2Q15CBJX83iVfdM3vsVNkUN1iCMu0DhDZppjTbRZMM5ChX1hrsS1gQ/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxvJ8ig6k9wkIvZBNlzyb2nnNzQ1AT81-GI-4fWsawBqiLWhuxK9-fKrdklv5zzoLRuqQ/exec'; 
     
     let globalOpapMaster = []; 
     let globalRekapOpap = { master: [], income: [] };
@@ -328,7 +311,6 @@
     let globalAppPin = "122009";
     let targetPasswordMenu = "";
 
-    // Ambil PIN secara diam-diam saat halaman dimuat
     window.addEventListener('DOMContentLoaded', async () => {
       const pin = await fetchAPI('getAppPin', {}, false);
       if(pin !== null && pin !== undefined) globalAppPin = pin.toString();
@@ -373,7 +355,9 @@
         const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: action, ...data }) });
         const result = await response.json();
         if(showLoading) document.getElementById('loading-overlay').classList.add('hidden');
-        if (result.status === 'success') return result.data; else { if(showLoading) showAlert("Error: " + result.message); return null; }
+        
+        // Peringatan / Error dimunculkan TANPA tulisan "Error: "
+        if (result.status === 'success') return result.data; else { if(showLoading) showAlert(result.message); return null; }
       } catch (error) {
         if(showLoading) { document.getElementById('loading-overlay').classList.add('hidden'); showAlert("Gagal menghubungi server."); }
         return null;
@@ -402,14 +386,24 @@
       }
     }
 
+    // Modal Tunggal yang sudah diperbaiki id dan strukturnya
     function showAlert(message) {
-      document.getElementById('custom-modal').classList.remove('hidden'); document.getElementById('modal-title').innerText = 'Informasi'; document.getElementById('modal-message').innerText = message;
-      document.getElementById('modal-btn-cancel').classList.add('hidden'); document.getElementById('modal-btn-ok').onclick = function() { closeModal(); };
+      document.getElementById('custom-modal').classList.remove('hidden'); 
+      document.getElementById('modal-title').innerText = 'Informasi'; 
+      document.getElementById('modal-message').innerText = message;
+      document.getElementById('modal-btn-cancel').classList.add('hidden'); 
+      document.getElementById('modal-btn-ok').onclick = function() { closeModal(); };
     }
+    
     function showConfirm(message, onConfirmCallback) {
-      document.getElementById('custom-modal').classList.remove('hidden'); document.getElementById('modal-title').innerText = 'Konfirmasi'; document.getElementById('modal-message').innerText = message;
-      document.getElementById('modal-btn-cancel').classList.remove('hidden'); document.getElementById('modal-btn-ok').onclick = function() { closeModal(); if(onConfirmCallback) onConfirmCallback(); };
+      document.getElementById('custom-modal').classList.remove('hidden'); 
+      document.getElementById('modal-title').innerText = 'Konfirmasi'; 
+      document.getElementById('modal-message').innerText = message;
+      document.getElementById('modal-btn-cancel').classList.remove('hidden'); 
+      document.getElementById('modal-btn-ok').onclick = function() { closeModal(); if(onConfirmCallback) onConfirmCallback(); };
     }
+    
+    function closeModal() { document.getElementById('custom-modal').classList.add('hidden'); }
     function formatRp(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); }
     function nav(viewId) { document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden')); document.getElementById('view-' + viewId).classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
@@ -562,7 +556,7 @@
       let htmlSatker = ''; let htmlTunggakan = ''; let index = 0; let grandTotalSatker = 0;
 
       Object.values(satkerGroups).sort((a,b)=>a.satker.localeCompare(b.satker)).forEach(sg => {
-        if(satkerFilter && satkerFilter !== '' && sg.satker !== satkerFilter) return;
+        if(satkerFilter !== '' && sg.satker !== satkerFilter) return;
         index++; grandTotalSatker += sg.totalNominal;
         let isSatkerLunas = sg.lunasCount === sg.people.length && sg.people.length > 0;
         let badgeSatker = isSatkerLunas ? `<span class="badge badge-lunas">Lunas</span>` : `<span class="badge badge-belum">Belum</span>`;
