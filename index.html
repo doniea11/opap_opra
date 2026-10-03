@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
   <title>Sistem Input Pemasukan</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tom Select Library untuk Dropdown Pencarian -->
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
     .win-btn { background-color: #0067c0; color: white; border-radius: 8px; transition: all 0.2s ease; border: 1px solid transparent; }
@@ -35,6 +40,18 @@
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     .loader { border: 4px solid #f3f3f3; border-top: 4px solid #0067c0; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Customisasi Tom Select */
+    .ts-control { border: 1px solid #cbd5e1 !important; border-radius: 6px !important; border-bottom: 2px solid #0067c0 !important; padding: 10px 14px !important; font-size: 16px !important; background-color: white !important; box-shadow: none !important; min-height: 46px; display: flex; align-items: center; }
+    .ts-control.focus { background-color: #f0f9ff !important; border-color: #0067c0 !important; }
+    .ts-dropdown { border-radius: 8px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; border: 1px solid #e2e8f0 !important; font-size: 14px !important; margin-top: 4px !important; }
+    .ts-dropdown .option { padding: 10px 14px !important; }
+    .ts-dropdown .option:hover, .ts-dropdown .active { background-color: #f0f9ff !important; color: #0067c0 !important; }
+    .ts-wrapper.single .ts-control:after { border-color: #64748b transparent transparent transparent !important; }
+    
+    /* Supaya tab bisa di-scroll menyamping di HP */
+    .tab-scroll { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+    .tab-scroll::-webkit-scrollbar { height: 4px; }
   </style>
 </head>
 <body class="text-slate-800 h-screen flex flex-col relative overflow-x-hidden">
@@ -109,7 +126,7 @@
         <button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker</label><select id="opap-income-satker" onchange="loadOpapIncomeNames()" class="win-input"></select></div>
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker (Ketik untuk mencari)</label><select id="opap-income-satker" class="win-input"></select></div>
         <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tanggal Input</label><input type="date" id="opap-income-tanggal" class="win-input"></div>
         <div><label class="block text-xs font-semibold mb-1 text-slate-500">Metode Pembayaran</label>
           <select id="opap-income-metode" class="win-input bg-white">
@@ -128,32 +145,34 @@
       </div>
     </div>
 
+    <!-- REKAP OP-AP WITH FILTERS -->
     <div id="view-opap-rekap" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Rekap OP-AP</h2>
         <button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button>
       </div>
       
-      <div class="flex gap-4 mb-4 border-b border-slate-200">
-        <button onclick="switchTabOpap('satker')" id="tab-opap-satker" class="py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0]">Rekap per Satker</button>
-        <button onclick="switchTabOpap('tunggakan')" id="tab-opap-tunggakan" class="py-2 px-4 font-semibold text-slate-500 hover:text-slate-700">Daftar Tunggakan</button>
+      <div class="flex gap-4 mb-4 border-b border-slate-200 tab-scroll pb-1">
+        <button onclick="switchTabOpap('satker')" id="tab-opap-satker" class="py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0] whitespace-nowrap">Rekap per Satker</button>
+        <button onclick="switchTabOpap('metode')" id="tab-opap-metode" class="py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap">Rekap Metode</button>
+        <button onclick="switchTabOpap('tunggakan')" id="tab-opap-tunggakan" class="py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap">Daftar Tunggakan</button>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
         <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tahun</label>
           <select id="filter-tahun-opap" class="win-input bg-white" onchange="renderRekapOpap()"></select>
         </div>
-        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Bulan (Hanya u/ Rekap per Satker)</label>
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Bulan</label>
           <select id="filter-bulan-opap" class="win-input bg-white" onchange="renderRekapOpap()">
-            <option value="all">Semua Bulan (Total)</option>
+            <option value="all">Semua Bulan (Total Tahunan)</option>
             <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
             <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
             <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
             <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
           </select>
         </div>
-        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Satker</label>
-          <select id="filter-satker-opap" class="win-input bg-white" onchange="renderRekapOpap()"></select>
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Satker (Ketik untuk mencari)</label>
+          <select id="filter-satker-opap" class="win-input bg-white"></select>
         </div>
       </div>
 
@@ -164,8 +183,16 @@
         </table>
       </div>
 
+      <div id="content-opap-metode" class="table-container hidden">
+        <div class="bg-indigo-50 text-indigo-700 p-3 text-sm mb-4 rounded-lg">Rincian pendapatan berdasarkan metode pembayaran sesuai Tahun & Bulan yang dipilih di atas.</div>
+        <table>
+          <thead><tr><th>Metode Pembayaran</th><th>Jumlah Transaksi</th><th>Total Nominal</th></tr></thead>
+          <tbody id="opap-metode-list"></tbody>
+        </table>
+      </div>
+
       <div id="content-opap-tunggakan" class="table-container hidden">
-        <div class="bg-red-50 text-red-700 p-3 text-sm mb-4 rounded-lg">Menampilkan rincian tunggakan berdasarkan kewajiban pembayaran dari bulan Januari hingga bulan berjalan di tahun yang dipilih.</div>
+        <div class="bg-red-50 text-red-700 p-3 text-sm mb-4 rounded-lg">Menampilkan rincian tunggakan kewajiban pembayaran dari awal tahun hingga bulan berjalan.</div>
         <table>
           <thead><tr><th>Nama</th><th>Satker</th><th>Bulan Belum Bayar</th></tr></thead>
           <tbody id="opap-tunggakan-list"></tbody>
@@ -196,7 +223,7 @@
     <div id="view-opra-income" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
       <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Input Setoran OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
       <div class="space-y-5">
-        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker</label><select id="opra-income-satker" class="win-input"></select></div>
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker (Ketik untuk mencari)</label><select id="opra-income-satker" class="win-input"></select></div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tanggal Setor</label><input type="date" id="opra-income-tanggal" class="win-input"></div>
           <div><label class="block text-xs font-semibold mb-1 text-slate-500">Nominal (Rp)</label><input type="number" id="opra-income-nominal" class="win-input"></div>
@@ -214,18 +241,19 @@
     <div id="view-opra-rekap" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
       <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Rekap OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
       
-      <div class="flex gap-4 mb-4 border-b border-slate-200">
-        <button onclick="switchTabOpra('utama')" id="tab-opra-utama" class="py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0]">Rekap Utama</button>
-        <button onclick="switchTabOpra('tunggakan')" id="tab-opra-tunggakan" class="py-2 px-4 font-semibold text-slate-500 hover:text-slate-700">Daftar Tunggakan</button>
+      <div class="flex gap-4 mb-4 border-b border-slate-200 tab-scroll pb-1">
+        <button onclick="switchTabOpra('utama')" id="tab-opra-utama" class="py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0] whitespace-nowrap">Rekap Utama</button>
+        <button onclick="switchTabOpra('metode')" id="tab-opra-metode" class="py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap">Rekap Metode</button>
+        <button onclick="switchTabOpra('tunggakan')" id="tab-opra-tunggakan" class="py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap">Daftar Tunggakan</button>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
         <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tahun</label>
           <select id="filter-tahun-opra" class="win-input bg-white" onchange="renderRekapOpra()"></select>
         </div>
-        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Bulan (Hanya u/ Rekap Utama)</label>
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Bulan</label>
           <select id="filter-bulan-opra" class="win-input bg-white" onchange="renderRekapOpra()">
-            <option value="all">Semua Bulan (Total)</option>
+            <option value="all">Semua Bulan (Total Tahunan)</option>
             <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
             <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
             <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
@@ -236,6 +264,13 @@
 
       <div id="content-opra-utama" class="table-container">
         <table><thead><tr><th>Nama Satker</th><th>Status Bayar</th><th>Total Nominal</th></tr></thead><tbody id="opra-rekap-list"></tbody></table>
+      </div>
+      <div id="content-opra-metode" class="table-container hidden">
+        <div class="bg-indigo-50 text-indigo-700 p-3 text-sm mb-4 rounded-lg">Rincian pendapatan berdasarkan metode pembayaran sesuai Tahun & Bulan yang dipilih di atas.</div>
+        <table>
+          <thead><tr><th>Metode Pembayaran</th><th>Jumlah Transaksi</th><th>Total Nominal</th></tr></thead>
+          <tbody id="opra-metode-list"></tbody>
+        </table>
       </div>
       <div id="content-opra-tunggakan" class="table-container hidden">
         <div class="bg-red-50 text-red-700 p-3 text-sm mb-4 rounded-lg">Rincian tunggakan lembaga.</div>
@@ -255,9 +290,12 @@
     let globalRekapOpra = { master: [], income: [] };
     const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
+    let opapSatkerSelect;
+    let opraSatkerSelect;
+    let opapRekapSatkerSelect;
+
     function getYearOptions() {
-      let currentYear = new Date().getFullYear();
-      let html = '';
+      let currentYear = new Date().getFullYear(); let html = '';
       for(let y = currentYear; y >= 2024; y--) html += `<option value="${y}">${y}</option>`;
       return html;
     }
@@ -271,18 +309,20 @@
     }
 
     function switchTabOpap(tab) {
-      document.getElementById('tab-opap-satker').className = "py-2 px-4 font-semibold text-slate-500 hover:text-slate-700";
-      document.getElementById('tab-opap-tunggakan').className = "py-2 px-4 font-semibold text-slate-500 hover:text-slate-700";
-      document.getElementById('content-opap-satker').classList.add('hidden'); document.getElementById('content-opap-tunggakan').classList.add('hidden');
-      document.getElementById(`tab-opap-${tab}`).className = "py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0]";
+      ['satker', 'metode', 'tunggakan'].forEach(t => {
+        document.getElementById(`tab-opap-${t}`).className = "py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap";
+        document.getElementById(`content-opap-${t}`).classList.add('hidden');
+      });
+      document.getElementById(`tab-opap-${tab}`).className = "py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0] whitespace-nowrap";
       document.getElementById(`content-opap-${tab}`).classList.remove('hidden');
     }
 
     function switchTabOpra(tab) {
-      document.getElementById('tab-opra-utama').className = "py-2 px-4 font-semibold text-slate-500 hover:text-slate-700";
-      document.getElementById('tab-opra-tunggakan').className = "py-2 px-4 font-semibold text-slate-500 hover:text-slate-700";
-      document.getElementById('content-opra-utama').classList.add('hidden'); document.getElementById('content-opra-tunggakan').classList.add('hidden');
-      document.getElementById(`tab-opra-${tab}`).className = "py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0]";
+      ['utama', 'metode', 'tunggakan'].forEach(t => {
+        document.getElementById(`tab-opra-${t}`).className = "py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap";
+        document.getElementById(`content-opra-${t}`).classList.add('hidden');
+      });
+      document.getElementById(`tab-opra-${tab}`).className = "py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0] whitespace-nowrap";
       document.getElementById(`content-opra-${tab}`).classList.remove('hidden');
     }
 
@@ -311,7 +351,7 @@
     function formatRp(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); }
     function nav(viewId) { document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden')); document.getElementById('view-' + viewId).classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-    // OP-AP
+    // ================== OP-AP ==================
     async function openOpapMaster() { nav('opap-master'); refreshOpapMasterTable(); }
     async function refreshOpapMasterTable() {
       document.getElementById('opap-master-list').innerHTML = '<tr><td colspan="3" class="text-center py-4">Memuat data...</td></tr>';
@@ -329,19 +369,33 @@
     function deleteOpap(id) { showConfirm('Hapus data ini?', async function() { const msg = await fetchAPI('deleteOpapMaster', { id }); if(msg) { showAlert(msg); refreshOpapMasterTable(); } }); }
     
     async function openOpapIncome() {
-      nav('opap-income'); document.getElementById('opap-income-satker').innerHTML = '<option>Loading...</option>'; document.getElementById('opap-names-container').classList.add('hidden');
+      nav('opap-income'); 
+      if(opapSatkerSelect) opapSatkerSelect.clear();
+      document.getElementById('opap-names-container').classList.add('hidden');
+      
       const data = await fetchAPI('getOpapMaster'); if(!data) return; globalOpapMaster = data;
       let satkers = [...new Set(data.map(item => item.satker))].sort((a, b) => a.localeCompare(b));
-      let options = '<option value="">-- Pilih Satker --</option>'; satkers.forEach(s => options += `<option value="${s}">${s}</option>`);
-      document.getElementById('opap-income-satker').innerHTML = options;
+      
+      let selectEl = document.getElementById('opap-income-satker');
+      if(opapSatkerSelect) opapSatkerSelect.destroy();
+
+      let options = '<option value="">-- Ketik atau Pilih Satker --</option>'; 
+      satkers.forEach(s => options += `<option value="${s}">${s}</option>`);
+      selectEl.innerHTML = options;
+
+      opapSatkerSelect = new TomSelect("#opap-income-satker", { create: false, sortField: { field: "text", direction: "asc" }, onChange: function(value) { loadOpapIncomeNames(); } });
     }
+
     function loadOpapIncomeNames() {
       const satker = document.getElementById('opap-income-satker').value; const listDiv = document.getElementById('opap-income-list');
       if(!satker) { document.getElementById('opap-names-container').classList.add('hidden'); return; }
+      
       const names = globalOpapMaster.filter(item => item.satker === satker).sort((a, b) => a.nama.localeCompare(b.nama));
-      let html = ''; names.forEach((item) => { html += `<div class="flex justify-between items-center bg-white p-3 border border-slate-200 rounded-lg"><div class="font-bold text-slate-700">${item.nama}</div><div class="w-1/2"><input type="number" data-nama="${item.nama}" class="opap-indiv-nominal win-input bg-slate-50" placeholder="Rp"></div></div>`; });
+      let html = ''; 
+      names.forEach((item) => { html += `<div class="flex justify-between items-center bg-white p-3 border border-slate-200 rounded-lg"><div class="font-bold text-slate-700">${item.nama}</div><div class="w-1/2"><input type="number" data-nama="${item.nama}" class="opap-indiv-nominal win-input bg-slate-50" placeholder="Rp"></div></div>`; });
       listDiv.innerHTML = html; document.getElementById('opap-names-container').classList.remove('hidden');
     }
+    
     function applyOpapBulkNominal() { const bulkVal = document.getElementById('opap-bulk-nominal').value; document.querySelectorAll('.opap-indiv-nominal').forEach(input => input.value = bulkVal); }
     
     async function submitOpapIncome() {
@@ -349,16 +403,27 @@
       if(!tanggal || !satker) return showAlert('Isi Tanggal dan Satker!');
       let dataToSave = []; document.querySelectorAll('.opap-indiv-nominal').forEach(input => dataToSave.push({ nama: input.getAttribute('data-nama'), nominal: input.value }));
       const msg = await fetchAPI('saveOpapIncome', { tanggal, satker, dataNominal: dataToSave, metode: metode });
-      if(msg) { showAlert(msg); document.getElementById('opap-income-satker').value = ''; document.getElementById('opap-bulk-nominal').value = ''; document.getElementById('opap-names-container').classList.add('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      if(msg) { showAlert(msg); if(opapSatkerSelect) opapSatkerSelect.clear(); document.getElementById('opap-bulk-nominal').value = ''; document.getElementById('opap-names-container').classList.add('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
     }
 
     async function openOpapRekap() {
-      nav('opap-rekap'); document.getElementById('opap-rekap-list').innerHTML = '<tr><td colspan="4" class="text-center py-4">Memuat data...</td></tr>'; document.getElementById('opap-tunggakan-list').innerHTML = '';
+      nav('opap-rekap'); 
+      document.getElementById('opap-rekap-list').innerHTML = '<tr><td colspan="4" class="text-center py-4">Memuat data...</td></tr>'; 
+      document.getElementById('opap-tunggakan-list').innerHTML = '';
+      document.getElementById('opap-metode-list').innerHTML = '';
+      
       const data = await fetchAPI('getRekapOpap'); if(!data) return; globalRekapOpap = data;
       document.getElementById('filter-tahun-opap').innerHTML = getYearOptions();
+      
       let satkers = [...new Set(data.master.map(item => item.satker))].sort((a, b) => a.localeCompare(b));
-      let options = '<option value="all">Semua Satker</option>'; satkers.forEach(s => options += `<option value="${s}">${s}</option>`);
-      document.getElementById('filter-satker-opap').innerHTML = options;
+      let selectEl = document.getElementById('filter-satker-opap');
+      if(opapRekapSatkerSelect) opapRekapSatkerSelect.destroy();
+
+      let options = '<option value="all">Semua Satker</option>'; 
+      satkers.forEach(s => options += `<option value="${s}">${s}</option>`);
+      selectEl.innerHTML = options;
+
+      opapRekapSatkerSelect = new TomSelect("#filter-satker-opap", { create: false, sortField: { field: "text", direction: "asc" }, onChange: function(value) { renderRekapOpap(); } });
       renderRekapOpap();
     }
 
@@ -371,25 +436,44 @@
       let filterBulanActive = bulanFilter !== 'all';
       if (filterBulanActive) expectedMonths = [parseInt(bulanFilter)];
 
-      let satkerGroups = {};
-      globalRekapOpap.master.forEach(m => {
-        if (!satkerGroups[m.satker]) satkerGroups[m.satker] = { satker: m.satker, people: [], totalNominal: 0, lunasCount: 0 };
+      let filteredIncome = globalRekapOpap.income.filter(inc => {
+        if(!inc.tanggal) return false;
+        let d = new Date(inc.tanggal);
+        if(d.getFullYear() !== tahun) return false;
+        if(filterBulanActive && (d.getMonth() + 1) !== parseInt(bulanFilter)) return false;
+        return true;
       });
 
-      globalRekapOpap.master.forEach(m => {
-        let personIncomes = globalRekapOpap.income.filter(inc => {
-          if(inc.nama !== m.nama || inc.satker !== m.satker || !inc.tanggal) return false;
-          return new Date(inc.tanggal).getFullYear() === tahun;
-        });
+      // Proses Rekap Metode
+      let metodeGroups = {};
+      filteredIncome.forEach(inc => {
+          let m = inc.metode || 'TUNAI';
+          if (!metodeGroups[m]) metodeGroups[m] = { count: 0, total: 0 };
+          metodeGroups[m].count++;
+          metodeGroups[m].total += (parseFloat(inc.nominal) || 0);
+      });
 
-        let paidMonths = [...new Set(personIncomes.map(inc => new Date(inc.tanggal).getMonth() + 1))];
+      let htmlMetode = ''; let grandTotalMetode = 0;
+      Object.keys(metodeGroups).sort().forEach(m => {
+          htmlMetode += `<tr class="border-b hover:bg-slate-50"><td class="font-bold text-slate-700">${m}</td><td class="text-slate-600">${metodeGroups[m].count} Transaksi</td><td class="font-bold text-emerald-600">${formatRp(metodeGroups[m].total)}</td></tr>`;
+          grandTotalMetode += metodeGroups[m].total;
+      });
+      htmlMetode += `<tr class="bg-slate-100 font-bold"><td colspan="2" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotalMetode)}</td></tr>`;
+      document.getElementById('opap-metode-list').innerHTML = Object.keys(metodeGroups).length > 0 ? htmlMetode : '<tr><td colspan="3" class="text-center py-4">Data kosong.</td></tr>';
+
+      // Proses Rekap Satker & Tunggakan
+      let satkerGroups = {};
+      globalRekapOpap.master.forEach(m => { if (!satkerGroups[m.satker]) satkerGroups[m.satker] = { satker: m.satker, people: [], totalNominal: 0, lunasCount: 0 }; });
+
+      globalRekapOpap.master.forEach(m => {
+        let personIncomesAllYear = globalRekapOpap.income.filter(inc => inc.nama === m.nama && inc.satker === m.satker && inc.tanggal && new Date(inc.tanggal).getFullYear() === tahun);
+        let personIncomesFiltered = personIncomesAllYear.filter(inc => !filterBulanActive || (new Date(inc.tanggal).getMonth() + 1) === parseInt(bulanFilter));
+        
+        let paidMonths = [...new Set(personIncomesAllYear.map(inc => new Date(inc.tanggal).getMonth() + 1))];
         let missingMonths = expectedMonths.filter(em => !paidMonths.includes(em));
         
         let totalPaid = 0; let metodes = new Set();
-        personIncomes.forEach(inc => { 
-          if(filterBulanActive && (new Date(inc.tanggal).getMonth() + 1) !== parseInt(bulanFilter)) return;
-          totalPaid += (parseFloat(inc.nominal) || 0); metodes.add(inc.metode);
-        });
+        personIncomesFiltered.forEach(inc => { totalPaid += (parseFloat(inc.nominal) || 0); metodes.add(inc.metode || 'TUNAI'); });
 
         let isLunas = missingMonths.length === 0;
         if(satkerGroups[m.satker]) {
@@ -399,38 +483,34 @@
         }
       });
 
-      let htmlSatker = ''; let htmlTunggakan = ''; let index = 0; let grandTotal = 0;
+      let htmlSatker = ''; let htmlTunggakan = ''; let index = 0; let grandTotalSatker = 0;
 
       Object.values(satkerGroups).sort((a,b)=>a.satker.localeCompare(b.satker)).forEach(sg => {
-        if(satkerFilter !== 'all' && sg.satker !== satkerFilter) return;
-        index++; grandTotal += sg.totalNominal;
+        if(satkerFilter !== 'all' && satkerFilter !== '' && sg.satker !== satkerFilter) return;
+        index++; grandTotalSatker += sg.totalNominal;
         let isSatkerLunas = sg.lunasCount === sg.people.length && sg.people.length > 0;
         let badgeSatker = isSatkerLunas ? `<span class="badge badge-lunas">Lunas</span>` : `<span class="badge badge-belum">Belum</span>`;
 
         htmlSatker += `<tr class="border-b border-slate-300 bg-white hover:bg-slate-50 cursor-pointer" onclick="document.getElementById('sub-opap-${index}').classList.toggle('hidden')">
             <td class="font-bold text-slate-800 flex justify-between items-center">${sg.satker} <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></td>
             <td>${badgeSatker}</td><td class="text-sm font-medium text-slate-500">${sg.lunasCount}/${sg.people.length} Orang</td><td class="font-bold text-emerald-600">${formatRp(sg.totalNominal)}</td></tr>
-            <tr id="sub-opap-${index}" class="hidden bg-slate-50"><td colspan="4" class="p-0 border-b-2 border-slate-200">
-                <table class="w-full text-sm">`;
+            <tr id="sub-opap-${index}" class="hidden bg-slate-50"><td colspan="4" class="p-0 border-b-2 border-slate-200"><table class="w-full text-sm">`;
         
         sg.people.forEach(p => {
             let badgeP = p.isLunas ? `<span class="text-emerald-600 font-bold">Lunas</span>` : `<span class="text-red-500 font-bold">Belum</span>`;
             let detailTunggakan = p.isLunas ? `<span class="text-slate-400">${p.metodes}</span>` : `Tunggakan: ${p.missingMonths.join(', ')}`;
             htmlSatker += `<tr class="border-b border-slate-200/50 last:border-0"><td class="pl-8 py-2 w-1/3 text-slate-700">• ${p.nama}</td><td class="py-2 w-1/6">${badgeP}</td><td class="py-2 w-1/4 font-medium text-slate-600">${formatRp(p.totalPaid)}</td><td class="py-2 text-xs text-red-500 italic">${detailTunggakan}</td></tr>`;
-            
-            if (!p.isLunas && expectedMonths.length > 0) {
-                htmlTunggakan += `<tr class="border-b hover:bg-slate-50"><td class="font-medium text-slate-700">${p.nama}</td><td class="text-slate-500">${sg.satker}</td><td class="text-red-500 font-semibold">${p.missingMonths.join(', ')}</td></tr>`;
-            }
+            if (!p.isLunas && expectedMonths.length > 0) htmlTunggakan += `<tr class="border-b hover:bg-slate-50"><td class="font-medium text-slate-700">${p.nama}</td><td class="text-slate-500">${sg.satker}</td><td class="text-red-500 font-semibold">${p.missingMonths.join(', ')}</td></tr>`;
         });
         htmlSatker += `</table></td></tr>`;
       });
 
-      htmlSatker += `<tr class="bg-slate-100 font-bold"><td colspan="3" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotal)}</td></tr>`;
+      htmlSatker += `<tr class="bg-slate-100 font-bold"><td colspan="3" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotalSatker)}</td></tr>`;
       document.getElementById('opap-rekap-list').innerHTML = htmlSatker || '<tr><td colspan="4" class="text-center py-4">Data kosong.</td></tr>';
       document.getElementById('opap-tunggakan-list').innerHTML = htmlTunggakan || '<tr><td colspan="3" class="text-center py-4 text-emerald-600 font-semibold">Semua Lunas! Tidak ada tunggakan.</td></tr>';
     }
 
-    // OP-RA
+    // ================== OP-RA ==================
     async function openOpraMaster() { nav('opra-master'); refreshOpraMasterTable(); }
     async function refreshOpraMasterTable() {
       document.getElementById('opra-master-list').innerHTML = '<tr><td colspan="2" class="text-center py-4">Memuat data...</td></tr>';
@@ -448,16 +528,27 @@
     function deleteOpra(id) { showConfirm('Hapus satker ini?', async function() { const msg = await fetchAPI('deleteOpraMaster', { id }); if(msg) { showAlert(msg); refreshOpraMasterTable(); } }); }
     
     async function openOpraIncome() {
-      nav('opra-income'); document.getElementById('opra-income-satker').innerHTML = '<option>Loading...</option>';
-      const data = await fetchAPI('getOpraMaster'); if(!data) return; data.sort((a, b) => a.satker.localeCompare(b.satker));
-      let options = '<option value="">-- Pilih Satker --</option>'; data.forEach(item => options += `<option value="${item.satker}">${item.satker}</option>`);
-      document.getElementById('opra-income-satker').innerHTML = options;
+      nav('opra-income'); 
+      if(opraSatkerSelect) opraSatkerSelect.clear();
+      
+      const data = await fetchAPI('getOpraMaster'); if(!data) return; 
+      data.sort((a, b) => a.satker.localeCompare(b.satker));
+      
+      let selectEl = document.getElementById('opra-income-satker');
+      if(opraSatkerSelect) opraSatkerSelect.destroy();
+
+      let options = '<option value="">-- Ketik atau Pilih Satker --</option>'; 
+      data.forEach(item => options += `<option value="${item.satker}">${item.satker}</option>`);
+      selectEl.innerHTML = options;
+
+      opraSatkerSelect = new TomSelect("#opra-income-satker", { create: false, sortField: { field: "text", direction: "asc" } });
     }
+
     async function submitOpraIncome() {
       const tanggal = document.getElementById('opra-income-tanggal').value; const satker = document.getElementById('opra-income-satker').value; const nominal = document.getElementById('opra-income-nominal').value; const metode = document.getElementById('opra-income-metode').value;
       if(!tanggal || !satker || !nominal) return showAlert('Lengkapi semua data!');
       const msg = await fetchAPI('saveOpraIncome', { tanggal, satker, nominal, metode });
-      if(msg) { showAlert(msg); document.getElementById('opra-income-satker').value = ''; document.getElementById('opra-income-nominal').value = ''; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      if(msg) { showAlert(msg); if(opraSatkerSelect) opraSatkerSelect.clear(); document.getElementById('opra-income-nominal').value = ''; window.scrollTo({ top: 0, behavior: 'smooth' }); }
     }
 
     async function openOpraRekap() {
@@ -474,31 +565,53 @@
       let filterBulanActive = bulanFilter !== 'all';
       if (filterBulanActive) expectedMonths = [parseInt(bulanFilter)];
 
-      let htmlSatker = ''; let htmlTunggakan = ''; let grandTotal = 0;
+      let filteredIncome = globalRekapOpra.income.filter(inc => {
+        if(!inc.tanggal) return false;
+        let d = new Date(inc.tanggal);
+        if(d.getFullYear() !== tahun) return false;
+        if(filterBulanActive && (d.getMonth() + 1) !== parseInt(bulanFilter)) return false;
+        return true;
+      });
+
+      // Proses Rekap Metode
+      let metodeGroups = {};
+      filteredIncome.forEach(inc => {
+          let m = inc.metode || 'TUNAI';
+          if (!metodeGroups[m]) metodeGroups[m] = { count: 0, total: 0 };
+          metodeGroups[m].count++;
+          metodeGroups[m].total += (parseFloat(inc.nominal) || 0);
+      });
+
+      let htmlMetode = ''; let grandTotalMetode = 0;
+      Object.keys(metodeGroups).sort().forEach(m => {
+          htmlMetode += `<tr class="border-b hover:bg-slate-50"><td class="font-bold text-slate-700">${m}</td><td class="text-slate-600">${metodeGroups[m].count} Transaksi</td><td class="font-bold text-emerald-600">${formatRp(metodeGroups[m].total)}</td></tr>`;
+          grandTotalMetode += metodeGroups[m].total;
+      });
+      htmlMetode += `<tr class="bg-slate-100 font-bold"><td colspan="2" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotalMetode)}</td></tr>`;
+      document.getElementById('opra-metode-list').innerHTML = Object.keys(metodeGroups).length > 0 ? htmlMetode : '<tr><td colspan="3" class="text-center py-4">Data kosong.</td></tr>';
+
+      // Proses Rekap Satker & Tunggakan
+      let htmlSatker = ''; let htmlTunggakan = ''; let grandTotalSatker = 0;
 
       globalRekapOpra.master.sort((a,b)=>a.satker.localeCompare(b.satker)).forEach(m => {
-        let satkerIncomes = globalRekapOpra.income.filter(inc => inc.satker === m.satker && inc.tanggal && new Date(inc.tanggal).getFullYear() === tahun);
-        
-        let paidMonths = [...new Set(satkerIncomes.map(inc => new Date(inc.tanggal).getMonth() + 1))];
+        let satkerIncomesAllYear = globalRekapOpra.income.filter(inc => inc.satker === m.satker && inc.tanggal && new Date(inc.tanggal).getFullYear() === tahun);
+        let satkerIncomesFiltered = satkerIncomesAllYear.filter(inc => !filterBulanActive || (new Date(inc.tanggal).getMonth() + 1) === parseInt(bulanFilter));
+
+        let paidMonths = [...new Set(satkerIncomesAllYear.map(inc => new Date(inc.tanggal).getMonth() + 1))];
         let missingMonths = expectedMonths.filter(em => !paidMonths.includes(em));
         
         let totalNominal = 0; let metodes = new Set();
-        satkerIncomes.forEach(inc => { 
-          if(filterBulanActive && (new Date(inc.tanggal).getMonth() + 1) !== parseInt(bulanFilter)) return;
-          totalNominal += (parseFloat(inc.nominal) || 0); metodes.add(inc.metode); 
-        });
+        satkerIncomesFiltered.forEach(inc => { totalNominal += (parseFloat(inc.nominal) || 0); metodes.add(inc.metode || 'TUNAI'); });
 
-        let isLunas = missingMonths.length === 0; grandTotal += totalNominal;
+        let isLunas = missingMonths.length === 0; grandTotalSatker += totalNominal;
         let badge = isLunas ? `<span class="badge badge-lunas">Lunas</span>` : `<span class="badge badge-belum">Belum</span>`;
         let desc = isLunas ? `<span class="text-xs text-slate-400 block">${Array.from(metodes).join(', ')}</span>` : `<span class="text-xs text-red-500 italic block">Tunggakan: ${missingMonths.map(mm=>monthNames[mm-1]).join(', ')}</span>`;
 
-        htmlSatker += `<tr><td class="font-bold text-slate-700">${m.satker}${desc}</td><td>${badge}</td><td class="font-bold text-emerald-600">${formatRp(totalNominal)}</td></tr>`;
-        if (!isLunas && expectedMonths.length > 0) {
-            htmlTunggakan += `<tr class="border-b hover:bg-slate-50"><td class="font-medium text-slate-700">${m.satker}</td><td class="text-red-500 font-semibold">${missingMonths.map(mm=>monthNames[mm-1]).join(', ')}</td></tr>`;
-        }
+        htmlSatker += `<tr class="border-b"><td class="font-bold text-slate-700 py-3">${m.satker}${desc}</td><td>${badge}</td><td class="font-bold text-emerald-600">${formatRp(totalNominal)}</td></tr>`;
+        if (!isLunas && expectedMonths.length > 0) htmlTunggakan += `<tr class="border-b hover:bg-slate-50"><td class="font-medium text-slate-700">${m.satker}</td><td class="text-red-500 font-semibold">${missingMonths.map(mm=>monthNames[mm-1]).join(', ')}</td></tr>`;
       });
       
-      htmlSatker += `<tr class="bg-slate-100 font-bold"><td colspan="2" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotal)}</td></tr>`;
+      htmlSatker += `<tr class="bg-slate-100 font-bold"><td colspan="2" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotalSatker)}</td></tr>`;
       document.getElementById('opra-rekap-list').innerHTML = htmlSatker || '<tr><td colspan="3" class="text-center py-4">Data kosong.</td></tr>';
       document.getElementById('opra-tunggakan-list').innerHTML = htmlTunggakan || '<tr><td colspan="2" class="text-center py-4 text-emerald-600 font-semibold">Semua Lunas! Tidak ada tunggakan.</td></tr>';
     }
