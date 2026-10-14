@@ -2,903 +2,842 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistem Pencatatanku</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+  <title>Sistem Input Pemasukan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
   <style>
-    :root {
-      --primary-blue: #005bb5;
-      --primary-blue-hover: #004494;
-      --bg-body: #f8f9fa;
-      --bg-card: #ffffff;
-      --text-dark: #333333;
-      --text-muted: #888888;
-      --border-color: #e0e0e0;
-      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
-      --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.1);
-    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
+    .win-btn { background-color: #0067c0; color: white; border-radius: 8px; transition: all 0.2s ease; border: 1px solid transparent; }
+    .win-btn:active { transform: scale(0.97); }
+    .win-btn-outline { border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; border-radius: 8px; transition: all 0.2s ease; }
+    .win-btn-outline:active { background-color: #f1f5f9; transform: scale(0.97); }
+    .win-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
+    .win-input { border: 1px solid #cbd5e1; border-radius: 6px; border-bottom: 2px solid #0067c0; padding: 10px 14px; transition: all 0.2s; width: 100%; font-size: 16px; }
+    .win-input:focus { outline: none; background-color: #f0f9ff; border-color: #0067c0; }
     
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Poppins', sans-serif;
-    }
+    .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; border: 1px solid #e2e8f0; }
+    table { width: 100%; min-width: 500px; border-collapse: collapse; background: white; }
+    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+    th { background-color: #f8fafc; font-weight: 600; color: #475569; white-space: nowrap; }
     
-    body {
-      background-color: var(--bg-body);
-      color: var(--text-dark);
-      line-height: 1.6;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .navbar {
-      background-color: var(--bg-card);
-      padding: 15px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-    }
-
-    .brand-title {
-      color: var(--primary-blue);
-      font-weight: 700;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand-icon {
-      width: 24px;
-      height: 24px;
-      fill: var(--primary-blue);
-    }
-
-    .btn-home {
-      background: #f0f2f5;
-      color: var(--text-dark);
-      border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: background 0.3s;
-    }
-
-    .btn-home:hover {
-      background: #e4e6e9;
-    }
-
-    .view-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-    }
-
-    .menu-grid {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 40px;
-      flex-wrap: wrap;
-      max-width: 1000px;
-    }
-
-    .circle-card {
-      background: var(--bg-card);
-      width: 260px;
-      height: 260px;
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      box-shadow: var(--shadow-soft);
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      text-align: center;
-      border: 1px solid rgba(0,0,0,0.02);
-    }
-
-    .circle-card:hover {
-      transform: translateY(-8px);
-      box-shadow: var(--shadow-hover);
-    }
-
-    .icon-wrapper {
-      width: 65px;
-      height: 65px;
-      border: 3px solid var(--primary-blue);
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .icon-wrapper svg {
-      width: 35px;
-      height: 35px;
-      fill: var(--primary-blue);
-    }
-
-    .circle-card h3 {
-      color: var(--primary-blue);
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-
-    .app-container {
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-      display: none; 
-    }
-
-    .card {
-      background: var(--bg-card);
-      border-radius: 12px;
-      padding: 25px;
-      box-shadow: var(--shadow-soft);
-      margin-bottom: 20px;
-      border: 1px solid var(--border-color);
-    }
-
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 25px;
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 10px;
-    }
+    .badge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+    .badge-lunas { background-color: #dcfce7; color: #166534; }
+    .badge-belum { background-color: #fee2e2; color: #991b1b; }
     
-    .tab-btn {
-      flex: 1;
-      padding: 10px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.3s;
-      font-size: 1rem;
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-overlay { animation: fadeIn 0.2s ease-out forwards; }
+    .modal-content { animation: slideUp 0.3s ease-out forwards; }
+    .ball-icon { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    .btn-circle:hover .ball-icon { transform: rotate(180deg); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .loader { border: 4px solid #f3f3f3; border-top: 4px solid #0067c0; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .ts-control { border: 1px solid #cbd5e1 !important; border-radius: 6px !important; border-bottom: 2px solid #0067c0 !important; padding: 10px 14px !important; font-size: 16px !important; background-color: white !important; box-shadow: none !important; min-height: 46px; display: flex; align-items: center; }
+    .ts-control.focus { background-color: #f0f9ff !important; border-color: #0067c0 !important; }
+    .ts-dropdown { border-radius: 8px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; border: 1px solid #e2e8f0 !important; font-size: 14px !important; margin-top: 4px !important; z-index: 50 !important; }
+    .ts-dropdown .option { padding: 10px 14px !important; }
+    .ts-dropdown .option:hover, .ts-dropdown .active { background-color: #f0f9ff !important; color: #0067c0 !important; }
+    .ts-wrapper.single .ts-control:after { border-color: #64748b transparent transparent transparent !important; }
     
-    .tab-btn.active {
-      background: var(--primary-blue);
-      color: #ffffff;
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 0.95rem;
-      color: var(--text-dark);
-      font-weight: 600;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 12px 15px;
-      background: #fafafa;
-      border: 1px solid #dcdcdc;
-      border-radius: 8px;
-      color: var(--text-dark);
-      font-size: 1rem;
-      outline: none;
-      transition: border-color 0.3s, background 0.3s;
-    }
-
-    input:focus, select:focus {
-      border-color: var(--primary-blue);
-      background: #ffffff;
-    }
-
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary-blue);
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      font-size: 1.05rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: background 0.3s;
-    }
-
-    .btn-submit:hover {
-      background: var(--primary-blue-hover);
-    }
-
-    .btn-back {
-      background: transparent;
-      border: none;
-      color: var(--primary-blue);
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 20px;
-      font-size: 0.95rem;
-      transition: opacity 0.3s;
-    }
-    
-    .btn-back:hover {
-      opacity: 0.7;
-    }
-
-    .filter-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    .rekap-card {
-      background: #ffffff;
-      border-left: 5px solid var(--primary-blue);
-      padding: 18px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-      border: 1px solid #eee;
-    }
-
-    .rekap-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    
-    .rekap-title {
-      font-weight: 700;
-      color: var(--primary-blue);
-      font-size: 1.1rem;
-    }
-
-    .rekap-meta {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    .total-nominal {
-      text-align: right;
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--primary-blue);
-      margin-bottom: 20px;
-      padding: 15px;
-      background: #f0f7ff;
-      border-radius: 8px;
-    }
-
-    .skeleton {
-      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-      background-size: 200% 100%;
-      animation: loading 1.5s infinite;
-      border-radius: 8px;
-      margin-bottom: 15px;
-    }
-
-    .skeleton-card { height: 90px; }
-
-    @keyframes loading {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    .btn-load-more {
-      width: 100%;
-      padding: 12px;
-      background: transparent;
-      border: 2px dashed var(--primary-blue);
-      color: var(--primary-blue);
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 15px;
-      transition: background 0.3s;
-    }
-    
-    .btn-load-more:hover {
-      background: #f0f7ff;
-    }
-
-    #toast-container {
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      z-index: 9999;
-    }
-
-    .toast {
-      background: var(--bg-card);
-      border-left: 5px solid var(--primary-blue);
-      color: var(--text-dark);
-      padding: 15px 20px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      opacity: 0;
-      transform: translateX(100%);
-      transition: all 0.4s ease-out;
-      font-weight: 600;
-    }
-
-    .toast.show { opacity: 1; transform: translateX(0); }
-    .toast.error { border-left-color: #dc3545; }
-    
-    .connection-badge {
-      position: fixed;
-      bottom: 15px;
-      right: 15px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      border: 1px solid var(--border-color);
-      z-index: 999;
-    }
-
-    .connection-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: #ffc107;
-      animation: pulse 1.5s infinite;
-    }
-
-    .connection-dot.online { background-color: #28a745; }
-    .connection-dot.offline { background-color: #dc3545; animation: none; }
-
-    @keyframes pulse {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.8; }
-    }
-
-    .hidden { display: none !important; }
+    .tab-scroll { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+    .tab-scroll::-webkit-scrollbar { height: 4px; }
   </style>
 </head>
-<body>
+<body class="text-slate-800 h-screen flex flex-col relative overflow-x-hidden">
 
-  <div class="navbar">
-    <div class="brand-title">
-      <svg class="brand-icon" viewBox="0 0 24 24">
-        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
-      </svg>
-      Sistem Pencatatanku
-    </div>
-    <button class="btn-home" onclick="goHome()">
-      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      Home
-    </button>
+  <!-- LOADING OVERLAY -->
+  <div id="loading-overlay" class="hidden fixed inset-0 bg-white/80 backdrop-blur-sm z-[60] flex flex-col items-center justify-center">
+    <div class="loader mb-4"></div>
+    <p class="text-slate-600 font-semibold animate-pulse">Memproses Data...</p>
   </div>
 
-  <div id="view-landing" class="view-container">
-    <div class="menu-grid">
-      
-      <div class="circle-card" onclick="showToast('Modul OP-AP aktif.', true)">
-        <div class="icon-wrapper">
-          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-        </div>
-        <h3>OP-AP</h3>
-      </div>
-
-      <div class="circle-card" onclick="showToast('Modul OP-RA aktif.', true)">
-        <div class="icon-wrapper">
-          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-        </div>
-        <h3>OP-RA</h3>
-      </div>
-
-      <div class="circle-card" onclick="openSertifikasi()">
-        <div class="icon-wrapper">
-          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-        </div>
-        <h3>Sertifikasi</h3>
-      </div>
-
-    </div>
-  </div>
-
-  <div id="view-sertifikasi-menu" class="view-container" style="display: none;">
-    <div style="text-align: center; margin-bottom: 40px;">
-      <h2 style="color: var(--primary-blue); font-weight: 700; margin-bottom: 5px;">MENU SERTIFIKASI</h2>
-      <p style="color: var(--text-muted);">Silakan pilih modul yang ingin diakses</p>
-    </div>
-    <div class="menu-grid">
-      
-      <div class="circle-card" onclick="openSertifikasiApp('master')">
-        <div class="icon-wrapper">
-          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-        </div>
-        <h3>MASTER DATA</h3>
-      </div>
-      
-      <div class="circle-card" onclick="openSertifikasiApp('form')">
-        <div class="icon-wrapper">
-          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-        </div>
-        <h3>INPUT INSENTIF</h3>
-      </div>
-      
-      <div class="circle-card" onclick="openSertifikasiApp('rekap')">
-        <div class="icon-wrapper">
-          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-        </div>
-        <h3>REKAPITULASI</h3>
-      </div>
-
-    </div>
-  </div>
-
-  <div id="view-sertifikasi" class="view-container" style="display: none;">
-    <div class="app-container" id="sertifikasi-app" style="display: block;">
-      
-      <div class="card">
-        <button class="btn-back" onclick="backToSertifikasiMenu()">
-          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-          Kembali ke Menu Sertifikasi
+  <!-- PASSWORD MODAL OVERLAY -->
+  <div id="password-modal" class="hidden fixed inset-0 bg-slate-900/60 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all modal-content">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <h3 class="text-lg font-bold text-[#0067c0]">Otorisasi Keamanan</h3>
+        <button onclick="closePasswordModal()" class="text-slate-400 hover:text-red-500">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
-
-        <div class="tabs">
-          <button class="tab-btn active" onclick="switchTab('master')">Master Data</button>
-          <button class="tab-btn" onclick="switchTab('form')">Input Insentif</button>
-          <button class="tab-btn" onclick="switchTab('rekap')">Rekapitulasi</button>
-        </div>
-        
-        <div id="section-master" class="hidden">
-          <form id="form-master" onsubmit="event.preventDefault(); submitMasterForm();">
-            <div style="margin-bottom: 20px;">
-              <h3 style="color: var(--primary-blue); margin-bottom: 5px;">Tambah Master Data</h3>
-              <p style="font-size: 0.9rem; color: var(--text-muted);">Data akan digunakan sebagai pilihan pada formulir insentif.</p>
-            </div>
-            
-            <div class="form-group">
-              <label>Nama Anggota</label>
-              <input type="text" id="master-nama" placeholder="MASUKKAN NAMA..." oninput="this.value = this.value.toUpperCase()" required>
-            </div>
-            
-            <div class="form-group">
-              <label>RA (Unit)</label>
-              <input type="text" id="master-ra" placeholder="MASUKKAN RA..." oninput="this.value = this.value.toUpperCase()" required>
-            </div>
-            
-            <button type="submit" id="btn-save-master" class="btn-submit">Simpan Master Data</button>
-          </form>
-        </div>
-
-        <div id="section-form" class="hidden">
-          <form id="form-sertifikasi" onsubmit="event.preventDefault(); submitForm();">
-            
-            <div class="form-group">
-              <label>Nama Personil</label>
-              <select id="input-nama" required onchange="autoFillRa()">
-                <option value="" disabled selected>Memuat data...</option>
-              </select>
-            </div>
-            
-            <div class="form-group">
-              <label>RA (Unit)</label>
-              <select id="input-ra" required>
-                <option value="" disabled selected>Memuat data...</option>
-              </select>
-            </div>
-            
-            <div class="form-group">
-              <label>Bulan</label>
-              <select id="input-bulan" required>
-                <option value="" disabled selected>Pilih Bulan...</option>
-                <option value="Januari">Januari</option>
-                <option value="Februari">Februari</option>
-                <option value="Maret">Maret</option>
-                <option value="April">April</option>
-                <option value="Mei">Mei</option>
-                <option value="Juni">Juni</option>
-                <option value="Juli">Juli</option>
-                <option value="Agustus">Agustus</option>
-                <option value="September">September</option>
-                <option value="Oktober">Oktober</option>
-                <option value="November">November</option>
-                <option value="Desember">Desember</option>
-              </select>
-            </div>
-            
-            <div class="form-group">
-              <label>Nominal (Rp)</label>
-              <input type="number" id="input-nominal" placeholder="Contoh: 500000" required min="0">
-            </div>
-            
-            <div class="form-group">
-              <label>Metode Pembayaran</label>
-              <select id="input-metode" required>
-                <option value="" disabled selected>Pilih Metode...</option>
-                <option value="Tunai">Tunai</option>
-                <option value="Transfer">Transfer</option>
-              </select>
-            </div>
-            
-            <button type="submit" id="btn-save" class="btn-submit">Simpan Data Insentif</button>
-          </form>
-        </div>
-
-        <div id="section-rekap" class="hidden">
-          <div class="filter-container">
-            <div>
-              <label>Filter RA</label>
-              <input type="text" id="filter-ra" placeholder="Semua RA" oninput="debounceFilter()">
-            </div>
-            <div>
-              <label>Filter Bulan</label>
-              <select id="filter-bulan" onchange="applyFilter()">
-                <option value="semua">Semua Bulan</option>
-                <option value="Januari">Januari</option>
-                <option value="Februari">Februari</option>
-                <option value="Maret">Maret</option>
-                <option value="April">April</option>
-                <option value="Mei">Mei</option>
-                <option value="Juni">Juni</option>
-                <option value="Juli">Juli</option>
-                <option value="Agustus">Agustus</option>
-                <option value="September">September</option>
-                <option value="Oktober">Oktober</option>
-                <option value="November">November</option>
-                <option value="Desember">Desember</option>
-              </select>
-            </div>
-          </div>
-          
-          <div class="total-nominal" id="display-total-nominal">Total: Rp 0</div>
-          <div id="rekap-list"></div>
-          <button id="btn-load-more" class="btn-load-more hidden" onclick="loadMoreData()">Tampilkan Lebih Banyak</button>
-        </div>
+      </div>
+      <div class="px-6 py-8 text-center">
+        <p class="text-slate-700 font-bold mb-4 uppercase tracking-wide text-sm">SILAHKAN MASUKKAN PASSWORD !!!</p>
+        <input type="password" id="input-password" class="win-input text-center text-3xl tracking-[0.3em] font-mono py-3" placeholder="••••••" onkeypress="if(event.key === 'Enter') submitPassword()">
+        <p id="password-error" class="text-red-500 text-sm mt-3 hidden font-bold animate-pulse">Password Salah!</p>
+      </div>
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100">
+        <button onclick="submitPassword()" class="win-btn w-full py-3.5 text-sm font-bold shadow-md hover:shadow-lg">BUKA AKSES</button>
       </div>
     </div>
   </div>
 
-  <div id="toast-container"></div>
-  
-  <!-- Connection Indicator Badge -->
-  <div class="connection-badge" id="connection-badge">
-    <div class="connection-dot" id="connection-dot"></div>
-    <span id="connection-text">Memeriksa Server...</span>
+  <!-- INFORMASI MODAL -->
+  <div id="sys-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-40 z-[90] flex items-center justify-center modal-overlay p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden modal-content border border-slate-200">
+      <div class="px-6 py-4 border-b border-slate-100"><h3 id="sys-modal-title" class="text-lg font-bold text-slate-800">Informasi</h3></div>
+      <div class="px-6 py-6 whitespace-pre-wrap"><p id="sys-modal-message" class="text-slate-600 text-sm md:text-base leading-relaxed"></p></div>
+      <div class="px-6 py-4 bg-slate-50 flex justify-end gap-3 border-t border-slate-100">
+        <button id="sys-modal-cancel" class="win-btn-outline px-5 py-2.5 text-sm font-semibold hidden w-full sm:w-auto" onclick="handleSysCancel()">Batal</button>
+        <button id="sys-modal-ok" class="win-btn px-5 py-2.5 text-sm font-semibold w-full sm:w-auto shadow-md" onclick="handleSysOk()">Oke</button>
+      </div>
+    </div>
   </div>
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md shadow-sm p-4 flex items-center justify-between border-b border-slate-200">
+    <div class="flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#0067c0]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+      <h1 class="text-lg font-bold text-[#0067c0] tracking-tight">SISTEM INPUT</h1>
+    </div>
+    <button onclick="nav('home')" class="text-xs sm:text-sm font-medium text-slate-500 hover:text-[#0067c0] flex items-center gap-1 bg-slate-100 px-3 py-1.5 rounded-full">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+      <span class="hidden sm:inline">Home</span>
+    </button>
+  </header>
+
+  <main class="p-4 sm:p-6 flex-1 max-w-5xl mx-auto w-full pb-20">
+    
+    <!-- HOME -->
+    <div id="view-home" class="view-section flex flex-col sm:flex-row gap-6 sm:gap-10 justify-center mt-8 sm:mt-16 items-center flex-wrap">
+      <button onclick="requirePassword('opap-menu')" class="win-card btn-circle w-44 h-44 sm:w-52 sm:h-52 rounded-full flex flex-col items-center justify-center cursor-pointer border-4 border-transparent hover:border-[#0067c0] transition-all bg-white shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="ball-icon w-12 h-12 sm:w-14 sm:h-14 mb-2 text-[#0067c0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 12l3-2.5-1-4.5H10l-1 4.5z"></path><path d="M12 12l-4 2-2-3"></path><path d="M15 9.5l5-1.5"></path><path d="M12 12l2 4 4 1"></path><path d="M8 14l-4 1"></path><path d="M14 16l-1 4"></path><path d="M10 16l1 4"></path></svg>
+        <span class="text-2xl sm:text-3xl font-bold text-[#0067c0] mb-1">OP-AP</span>
+      </button>
+
+      <button onclick="requirePassword('opra-menu')" class="win-card btn-circle w-44 h-44 sm:w-52 sm:h-52 rounded-full flex flex-col items-center justify-center cursor-pointer border-4 border-transparent hover:border-[#0067c0] transition-all bg-white shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="ball-icon w-12 h-12 sm:w-14 sm:h-14 mb-2 text-[#0067c0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 12l3-2.5-1-4.5H10l-1 4.5z"></path><path d="M12 12l-4 2-2-3"></path><path d="M15 9.5l5-1.5"></path><path d="M12 12l2 4 4 1"></path><path d="M8 14l-4 1"></path><path d="M14 16l-1 4"></path><path d="M10 16l1 4"></path></svg>
+        <span class="text-2xl sm:text-3xl font-bold text-[#0067c0] mb-1">OP-RA</span>
+      </button>
+
+      <button onclick="requirePassword('sertifikasi-menu')" class="win-card btn-circle w-44 h-44 sm:w-52 sm:h-52 rounded-full flex flex-col items-center justify-center cursor-pointer border-4 border-transparent hover:border-[#0067c0] transition-all bg-white shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="ball-icon w-12 h-12 sm:w-14 sm:h-14 mb-2 text-[#0067c0]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+        <span class="text-xl sm:text-2xl font-bold text-[#0067c0] mb-1">Sertifikasi</span>
+      </button>
+    </div>
+
+    <!-- ================================= OP-AP ================================= -->
+    <div id="view-opap-menu" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <h2 class="text-xl sm:text-2xl font-bold mb-6 text-slate-800 border-b pb-3">Menu OP-AP</h2>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button onclick="openOpapMaster()" class="win-btn-outline w-full px-4 py-3.5 font-semibold text-sm shadow-sm">Master Data</button>
+        <button onclick="openOpapIncome()" class="win-btn w-full px-4 py-3.5 font-semibold text-sm shadow-md">Input Income</button>
+        <button onclick="openOpapRekap()" class="win-btn-outline w-full px-4 py-3.5 font-semibold text-sm shadow-sm">Rekapitulasi</button>
+      </div>
+    </div>
+
+    <div id="view-opap-master" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Master Data OP-AP</h2><button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
+      <input type="hidden" id="opap-id">
+      <div class="flex flex-col sm:flex-row gap-4 mb-6 bg-slate-50 p-4 sm:p-5 rounded-xl border border-slate-200">
+        <div class="w-full"><label class="block text-xs font-semibold mb-1 text-slate-500 uppercase">Nama</label><input type="text" id="opap-nama" class="win-input"></div>
+        <div class="w-full"><label class="block text-xs font-semibold mb-1 text-slate-500 uppercase">Satker</label><input type="text" id="opap-satker" class="win-input"></div>
+        <button onclick="saveOpapMasterData()" class="win-btn w-full sm:w-auto px-6 py-2 h-[42px] mt-auto shadow-md">Simpan</button>
+      </div>
+      <div class="table-container"><table><thead><tr><th>Nama</th><th>Satker</th><th class="w-24">Aksi</th></tr></thead><tbody id="opap-master-list"></tbody></table></div>
+    </div>
+
+    <div id="view-opap-income" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3">
+        <h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Input Income OP-AP</h2>
+        <button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker</label>
+          <select id="opap-income-satker" class="win-input"></select>
+        </div>
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tanggal Bayar</label><input type="date" id="opap-income-tanggal" class="win-input"></div>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">Untuk Bulan</label>
+          <select id="opap-income-bulan" class="win-input bg-white">
+            <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+            <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+            <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+            <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+          </select>
+        </div>
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Metode Pembayaran</label>
+          <select id="opap-income-metode" class="win-input bg-white">
+            <option value="TUNAI">TUNAI</option><option value="BRI">BRI</option><option value="BSI">BSI</option>
+            <option value="BNI">BNI</option><option value="MANDIRI">MANDIRI</option>
+          </select>
+        </div>
+      </div>
+      <div id="opap-names-container" class="hidden mt-6">
+        <div id="opap-bulk-wrapper" class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl mb-5 flex flex-col sm:flex-row gap-3">
+          <div class="w-full"><label class="block text-xs font-bold text-indigo-800 mb-1">Isi nominal serentak:</label><input type="number" id="opap-bulk-nominal" class="win-input bg-white"></div>
+          <button onclick="applyOpapBulkNominal()" class="win-btn bg-indigo-600 px-5 py-2 h-[42px] mt-auto text-sm">Terapkan Semua</button>
+        </div>
+        <div id="opap-income-list" class="space-y-3 mb-6"></div>
+        <button onclick="submitOpapIncome()" class="win-btn px-6 py-3.5 w-full font-bold text-base shadow-lg">Simpan Data Input</button>
+      </div>
+    </div>
+
+    <!-- REKAP OP-AP -->
+    <div id="view-opap-rekap" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Rekap OP-AP</h2>
+        <button onclick="nav('opap-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button>
+      </div>
+      
+      <div class="flex gap-4 mb-4 border-b border-slate-200 tab-scroll pb-1">
+        <button onclick="switchTabOpap('satker')" id="tab-opap-satker" class="py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0] whitespace-nowrap">Rekap per Satker</button>
+        <button onclick="switchTabOpap('metode')" id="tab-opap-metode" class="py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap">Rekap Metode</button>
+        <button onclick="switchTabOpap('tunggakan')" id="tab-opap-tunggakan" class="py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap">Daftar Tunggakan</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tahun</label>
+          <select id="filter-tahun-opap" class="win-input bg-white" onchange="renderRekapOpap()"></select>
+        </div>
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Bulan</label>
+          <select id="filter-bulan-opap" class="win-input bg-white" onchange="renderRekapOpap()">
+            <option value="all">Semua Bulan (Total Tahunan)</option>
+            <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+            <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+            <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+            <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">Satker (Ketik untuk mencari)</label>
+          <select id="filter-satker-opap" class="win-input bg-white"></select>
+        </div>
+      </div>
+
+      <div id="content-opap-satker" class="table-container">
+        <table><thead><tr><th>Nama Satker</th><th>Status</th><th>Progres</th><th>Total Terkumpul</th></tr></thead><tbody id="opap-rekap-list"></tbody></table>
+      </div>
+
+      <div id="content-opap-metode" class="table-container hidden">
+        <div class="bg-indigo-50 text-indigo-700 p-3 text-sm mb-4 rounded-lg">Rincian pendapatan berdasarkan metode pembayaran sesuai Tahun & Bulan yang dipilih di atas.</div>
+        <table><thead><tr><th>Metode Pembayaran</th><th>Jumlah Transaksi</th><th>Total Nominal</th></tr></thead><tbody id="opap-metode-list"></tbody></table>
+      </div>
+
+      <div id="content-opap-tunggakan" class="table-container hidden">
+        <div class="bg-red-50 text-red-700 p-3 text-sm mb-4 rounded-lg">Menampilkan rincian tunggakan kewajiban pembayaran dari awal tahun hingga bulan berjalan.</div>
+        <table><thead><tr><th>Nama</th><th>Satker</th><th>Bulan Belum Bayar</th></tr></thead><tbody id="opap-tunggakan-list"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ================================= OP-RA ================================= -->
+    <div id="view-opra-menu" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <h2 class="text-xl sm:text-2xl font-bold mb-6 text-slate-800 border-b pb-3">Menu OP-RA</h2>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button onclick="openOpraMaster()" class="win-btn-outline w-full px-4 py-3.5 font-semibold text-sm shadow-sm">Master Satker</button>
+        <button onclick="openOpraIncome()" class="win-btn w-full px-4 py-3.5 font-semibold text-sm shadow-md">Input Setoran</button>
+        <button onclick="openOpraRekap()" class="win-btn-outline w-full px-4 py-3.5 font-semibold text-sm shadow-sm">Rekapitulasi</button>
+      </div>
+    </div>
+
+    <div id="view-opra-master" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Master OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
+      <input type="hidden" id="opra-id">
+      <div class="flex flex-col sm:flex-row gap-4 mb-6 bg-slate-50 p-4 sm:p-5 rounded-xl border border-slate-200">
+        <div class="w-full"><label class="block text-xs font-semibold mb-1 text-slate-500 uppercase">Nama Satker Lembaga</label><input type="text" id="opra-satker" class="win-input"></div>
+        <button onclick="saveOpraMasterData()" class="win-btn w-full sm:w-auto px-6 py-2 h-[42px] mt-auto shadow-md">Simpan</button>
+      </div>
+      <div class="table-container"><table><thead><tr><th>Nama Satker</th><th class="w-24">Aksi</th></tr></thead><tbody id="opra-master-list"></tbody></table></div>
+    </div>
+
+    <div id="view-opra-income" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Input Setoran OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
+      <div class="space-y-5">
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">Pilih Satker</label>
+          <select id="opra-income-satker" class="win-input"></select>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tanggal Bayar</label><input type="date" id="opra-income-tanggal" class="win-input"></div>
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-slate-500">Untuk Bulan</label>
+            <select id="opra-income-bulan" class="win-input bg-white">
+              <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+              <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+              <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+              <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+            </select>
+          </div>
+          <div><label class="block text-xs font-semibold mb-1 text-slate-500">Nominal (Rp)</label><input type="number" id="opra-income-nominal" class="win-input"></div>
+          <div><label class="block text-xs font-semibold mb-1 text-slate-500">Metode Pembayaran</label>
+            <select id="opra-income-metode" class="win-input bg-white">
+              <option value="TUNAI">TUNAI</option><option value="BRI">BRI</option><option value="BSI">BSI</option>
+              <option value="BNI">BNI</option><option value="MANDIRI">MANDIRI</option>
+            </select>
+          </div>
+        </div>
+        <button onclick="submitOpraIncome()" class="win-btn px-6 py-3.5 w-full font-bold text-base shadow-lg mt-4">Simpan Setoran</button>
+      </div>
+    </div>
+
+    <!-- REKAP OP-RA -->
+    <div id="view-opra-rekap" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Rekap OP-RA</h2><button onclick="nav('opra-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
+      
+      <div class="flex gap-4 mb-4 border-b border-slate-200 tab-scroll pb-1">
+        <button onclick="switchTabOpra('utama')" id="tab-opra-utama" class="py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0] whitespace-nowrap">Rekap Utama</button>
+        <button onclick="switchTabOpra('metode')" id="tab-opra-metode" class="py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap">Rekap Metode</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Tahun</label>
+          <select id="filter-tahun-opra" class="win-input bg-white" onchange="renderRekapOpra()"></select>
+        </div>
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Bulan (Hanya u/ Rekap Utama)</label>
+          <select id="filter-bulan-opra" class="win-input bg-white" onchange="renderRekapOpra()">
+            <option value="all">Semua Bulan (Total Tahunan)</option>
+            <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+            <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+            <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+            <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="content-opra-utama" class="table-container"><table><thead><tr><th>Nama Satker</th><th>Status Setoran</th><th>Total Nominal</th></tr></thead><tbody id="opra-rekap-list"></tbody></table></div>
+      <div id="content-opra-metode" class="table-container hidden">
+        <div class="bg-indigo-50 text-indigo-700 p-3 text-sm mb-4 rounded-lg">Rincian pendapatan berdasarkan metode pembayaran sesuai Tahun & Bulan yang dipilih di atas.</div>
+        <table><thead><tr><th>Metode Pembayaran</th><th>Jumlah Transaksi</th><th>Total Nominal</th></tr></thead><tbody id="opra-metode-list"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ================================= SERTIFIKASI (BARU) ================================= -->
+    <div id="view-sertifikasi-menu" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <h2 class="text-xl sm:text-2xl font-bold mb-6 text-slate-800 border-b pb-3">Menu Sertifikasi</h2>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button onclick="openSertifikasiMaster()" class="win-btn-outline w-full px-4 py-3.5 font-semibold text-sm shadow-sm">Master Data</button>
+        <button onclick="openSertifikasiIncome()" class="win-btn w-full px-4 py-3.5 font-semibold text-sm shadow-md">Input Insentif</button>
+        <button onclick="openSertifikasiRekap()" class="win-btn-outline w-full px-4 py-3.5 font-semibold text-sm shadow-sm">Rekapitulasi</button>
+      </div>
+    </div>
+
+    <div id="view-sertifikasi-master" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Master Data Sertifikasi</h2><button onclick="nav('sertifikasi-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
+      <div class="flex flex-col sm:flex-row gap-4 mb-6 bg-slate-50 p-4 sm:p-5 rounded-xl border border-slate-200">
+        <div class="w-full"><label class="block text-xs font-semibold mb-1 text-slate-500 uppercase">Nama Anggota</label><input type="text" id="sertifikasi-master-nama" class="win-input" oninput="this.value = this.value.toUpperCase()"></div>
+        <div class="w-full"><label class="block text-xs font-semibold mb-1 text-slate-500 uppercase">RA (Unit)</label><input type="text" id="sertifikasi-master-ra" class="win-input" oninput="this.value = this.value.toUpperCase()"></div>
+        <button onclick="saveSertifikasiMasterData()" class="win-btn w-full sm:w-auto px-6 py-2 h-[42px] mt-auto shadow-md">Simpan</button>
+      </div>
+      <div class="table-container"><table><thead><tr><th>Nama Anggota</th><th>RA (Unit)</th><th class="w-24">Aksi</th></tr></thead><tbody id="sertifikasi-master-list"></tbody></table></div>
+    </div>
+
+    <div id="view-sertifikasi-income" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Input Insentif Sertifikasi</h2><button onclick="nav('sertifikasi-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
+      <div class="space-y-5">
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">Nama Personil</label>
+          <select id="sertifikasi-input-nama" class="win-input" onchange="autoFillSertifikasiRa()"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">RA (Unit)</label>
+          <select id="sertifikasi-input-ra" class="win-input"></select>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-slate-500">Bulan</label>
+            <select id="sertifikasi-input-bulan" class="win-input bg-white">
+              <option value="Januari">Januari</option><option value="Februari">Februari</option><option value="Maret">Maret</option>
+              <option value="April">April</option><option value="Mei">Mei</option><option value="Juni">Juni</option>
+              <option value="July">Juli</option><option value="Agustus">Agustus</option><option value="September">September</option>
+              <option value="Oktober">Oktober</option><option value="November">November</option><option value="Desember">Desember</option>
+            </select>
+          </div>
+          <div><label class="block text-xs font-semibold mb-1 text-slate-500">Nominal (Rp)</label><input type="number" id="sertifikasi-input-nominal" class="win-input" min="0"></div>
+          <div>
+            <label class="block text-xs font-semibold mb-1 text-slate-500">Metode Pembayaran</label>
+            <select id="sertifikasi-input-metode" class="win-input bg-white">
+              <option value="Tunai">Tunai</option><option value="Transfer">Transfer</option>
+            </select>
+          </div>
+        </div>
+        <button onclick="submitSertifikasiIncome()" class="win-btn px-6 py-3.5 w-full font-bold text-base shadow-lg mt-4">Simpan Data Insentif</button>
+      </div>
+    </div>
+
+    <!-- REKAP SERTIFIKASI -->
+    <div id="view-sertifikasi-rekap" class="view-section hidden win-card rounded-2xl p-5 sm:p-8 mt-4 sm:mt-6">
+      <div class="flex justify-between items-center mb-6"><h2 class="text-lg sm:text-xl font-bold text-[#0067c0]">Rekapitulasi Sertifikasi</h2><button onclick="nav('sertifikasi-menu')" class="text-sm font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kembali</button></div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <div><label class="block text-xs font-semibold mb-1 text-slate-500">Filter RA</label><input type="text" id="filter-ra-sertifikasi" placeholder="Semua RA..." class="win-input bg-white" oninput="renderRekapSertifikasi()"></div>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-500">Filter Bulan</label>
+          <select id="filter-bulan-sertifikasi" class="win-input bg-white" onchange="renderRekapSertifikasi()">
+            <option value="semua">Semua Bulan</option>
+            <option value="Januari">Januari</option><option value="Februari">Februari</option><option value="Maret">Maret</option>
+            <option value="April">April</option><option value="Mei">Mei</option><option value="Juni">Juni</option>
+            <option value="Juli">Juli</option><option value="Agustus">Agustus</option><option value="September">September</option>
+            <option value="Oktober">Oktober</option><option value="November">November</option><option value="Desember">Desember</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="bg-sky-50 text-sky-800 p-4 rounded-xl font-bold text-lg mb-4 text-right" id="sertifikasi-total-nominal">Total: Rp 0</div>
+      <div id="sertifikasi-rekap-list" class="space-y-3"></div>
+    </div>
+  </main>
 
   <script>
-    var currentPage = 1;
-    var currentLimit = 10;
-    var hasMoreData = false;
-    var isFetching = false;
-    var debounceTimer;
-    var masterDataMap = {}; 
+    // ==========================================
+    // URL WEB APP GOOGLE APPS SCRIPT
+    // ==========================================
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyPVfOiyoWCrlOa2ZKJH1rcyCSjtNXgLg09jihdQ0Pv1uzgJOaB20Ych4kO7wyGf46pyA/exec'; 
+    
+    let globalOpapMaster = []; 
+    let globalRekapOpap = { master: [], income: [] };
+    let globalRekapOpra = { master: [], income: [] };
+    let globalSertifikasiMaster = { namas: [], ras: [], map: {} };
+    let globalSertifikasiRekap = [];
+    const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
-    function formatRupiah(angka) {
-      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+    let opapSatkerSelect; let opraSatkerSelect; let opapRekapSatkerSelect;
+    let sertifikasiNamaSelect; let sertifikasiRaSelect;
+    let globalAppPin = "122009"; let targetPasswordMenu = "";
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const pin = await fetchAPI('getAppPin', {}, false);
+      if(pin !== null && pin !== undefined) globalAppPin = pin.toString();
+    });
+
+    function getYearOptions() {
+      let currentYear = new Date().getFullYear(); let html = '';
+      for(let y = currentYear; y >= 2024; y--) html += `<option value="${y}">${y}</option>`;
+      return html;
     }
 
-    function showToast(message, isSuccess) {
-      var container = document.getElementById('toast-container');
-      var toast = document.createElement('div');
-      toast.className = 'toast' + (!isSuccess ? ' error' : '');
-      toast.innerText = message;
-      container.appendChild(toast);
-      setTimeout(function() { toast.classList.add('show'); }, 10);
-      setTimeout(function() {
-        toast.classList.remove('show');
-        setTimeout(function() { toast.remove(); }, 400);
-      }, 3000);
+    function getExpectedMonths(selectedYear) {
+      const today = new Date(); const currentYear = today.getFullYear(); const currentMonth = today.getMonth() + 1;
+      let expected = [];
+      if (selectedYear < currentYear) { expected = [1,2,3,4,5,6,7,8,9,10,11,12]; } 
+      else if (selectedYear == currentYear) { for (let i = 1; i <= currentMonth; i++) expected.push(i); }
+      return expected;
     }
 
-    function updateConnectionStatus(isOnline, message) {
-      var dot = document.getElementById('connection-dot');
-      var text = document.getElementById('connection-text');
-      if (isOnline) {
-        dot.className = 'connection-dot online';
-        text.innerText = message || 'Server Terhubung';
-      } else {
-        dot.className = 'connection-dot offline';
-        text.innerText = message || 'Koneksi Terputus';
+    function switchTabOpap(tab) {
+      ['satker', 'metode', 'tunggakan'].forEach(t => {
+        document.getElementById(`tab-opap-${t}`).className = "py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap";
+        document.getElementById(`content-opap-${t}`).classList.add('hidden');
+      });
+      document.getElementById(`tab-opap-${tab}`).className = "py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0] whitespace-nowrap";
+      document.getElementById(`content-opap-${tab}`).classList.remove('hidden');
+    }
+
+    function switchTabOpra(tab) {
+      ['utama', 'metode'].forEach(t => {
+        document.getElementById(`tab-opra-${t}`).className = "py-2 px-4 font-semibold text-slate-500 hover:text-slate-700 whitespace-nowrap";
+        document.getElementById(`content-opra-${t}`).classList.add('hidden');
+      });
+      document.getElementById(`tab-opra-${tab}`).className = "py-2 px-4 font-bold text-[#0067c0] border-b-2 border-[#0067c0] whitespace-nowrap";
+      document.getElementById(`content-opra-${tab}`).classList.remove('hidden');
+    }
+
+    async function fetchAPI(action, data = {}, showLoading = true) {
+      if(!API_URL || API_URL.includes('MASUKKAN_URL')) { if(showLoading) showAlert("URL API belum disetting di kode HTML!"); return null; }
+      if(showLoading) document.getElementById('loading-overlay').classList.remove('hidden');
+      try {
+        const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: action, ...data }) });
+        const result = await response.json();
+        if(showLoading) document.getElementById('loading-overlay').classList.add('hidden');
+        
+        if (result.status === 'success') return result.data; else { if(showLoading) showAlert(result.message); return null; }
+      } catch (error) {
+        if(showLoading) { document.getElementById('loading-overlay').classList.add('hidden'); showAlert("Gagal menghubungi server."); }
+        return null;
       }
     }
 
-    function goHome() {
-      document.getElementById('view-landing').style.display = 'flex';
-      document.getElementById('view-sertifikasi-menu').style.display = 'none';
-      document.getElementById('view-sertifikasi').style.display = 'none';
+    function requirePassword(menu) { targetPasswordMenu = menu; document.getElementById('input-password').value = ''; document.getElementById('password-error').classList.add('hidden'); document.getElementById('password-modal').classList.remove('hidden'); setTimeout(() => document.getElementById('input-password').focus(), 100); }
+    function closePasswordModal() { document.getElementById('password-modal').classList.add('hidden'); }
+    function submitPassword() { const inputVal = document.getElementById('input-password').value; if(inputVal === globalAppPin) { closePasswordModal(); nav(targetPasswordMenu); } else { document.getElementById('password-error').classList.remove('hidden'); document.getElementById('input-password').value = ''; document.getElementById('input-password').focus(); } }
+
+    let sysConfirmCallback = null;
+    function showAlert(message) { document.getElementById('sys-modal').classList.remove('hidden'); document.getElementById('sys-modal-title').innerText = 'Informasi'; document.getElementById('sys-modal-message').innerText = message; document.getElementById('sys-modal-cancel').classList.add('hidden'); sysConfirmCallback = null; }
+    function showConfirm(message, callback) { document.getElementById('sys-modal').classList.remove('hidden'); document.getElementById('sys-modal-title').innerText = 'Konfirmasi'; document.getElementById('sys-modal-message').innerText = message; document.getElementById('sys-modal-cancel').classList.remove('hidden'); sysConfirmCallback = callback; }
+    function handleSysOk() { document.getElementById('sys-modal').classList.add('hidden'); if (sysConfirmCallback) { sysConfirmCallback(); sysConfirmCallback = null; } }
+    function handleSysCancel() { document.getElementById('sys-modal').classList.add('hidden'); sysConfirmCallback = null; }
+
+    function formatRp(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); }
+    function nav(viewId) { document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden')); document.getElementById('view-' + viewId).classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+    // ================== OP-AP ==================
+    async function openOpapMaster() { nav('opap-master'); refreshOpapMasterTable(); }
+    async function refreshOpapMasterTable() {
+      document.getElementById('opap-master-list').innerHTML = '<tr><td colspan="3" class="text-center py-4">Memuat data...</td></tr>';
+      const data = await fetchAPI('getOpapMaster'); if(!data) return; globalOpapMaster = data; let html = '';
+      data.forEach(item => { html += `<tr><td class="font-medium text-slate-700">${item.nama}</td><td class="text-slate-500">${item.satker}</td><td><button onclick="editOpap('${item.id}', '${item.nama}', '${item.satker}')" class="text-blue-600 mr-2">Edit</button> <button onclick="deleteOpap('${item.id}')" class="text-red-500">Hapus</button></td></tr>`; });
+      document.getElementById('opap-master-list').innerHTML = html || '<tr><td colspan="3" class="text-center py-4">Data kosong.</td></tr>';
+    }
+    async function saveOpapMasterData() {
+      const id = document.getElementById('opap-id').value; const nama = document.getElementById('opap-nama').value; const satker = document.getElementById('opap-satker').value;
+      if (!nama || !satker) return showAlert("Nama dan Satker harus diisi!");
+      document.getElementById('opap-nama').value = ''; document.getElementById('opap-satker').value = ''; document.getElementById('opap-id').value = '';
+      const msg = await fetchAPI('saveOpapMaster', { id, nama, satker }); if(msg) { showAlert(msg); refreshOpapMasterTable(); }
+    }
+    function editOpap(id, nama, satker) { document.getElementById('opap-id').value = id; document.getElementById('opap-nama').value = nama; document.getElementById('opap-satker').value = satker; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    function deleteOpap(id) { showConfirm('Hapus data ini?', async function() { const msg = await fetchAPI('deleteOpapMaster', { id }); if(msg) { showAlert(msg); refreshOpapMasterTable(); } }); }
+    
+    async function openOpapIncome() {
+      nav('opap-income'); 
+      if(opapSatkerSelect) opapSatkerSelect.clear();
+      document.getElementById('opap-names-container').classList.add('hidden');
+      
+      const data = await fetchAPI('getOpapMaster'); if(!data) return; globalOpapMaster = data;
+      let satkers = [...new Set(data.map(item => item.satker))].sort((a, b) => a.localeCompare(b));
+      
+      let selectEl = document.getElementById('opap-income-satker');
+      if(opapSatkerSelect) opapSatkerSelect.destroy();
+
+      let options = '<option value="">-- Ketik atau Pilih Satker --</option>'; 
+      satkers.forEach(s => options += `<option value="${s}">${s}</option>`);
+      selectEl.innerHTML = options;
+
+      opapSatkerSelect = new TomSelect("#opap-income-satker", { create: false, sortField: { field: "text", direction: "asc" }, onChange: function(value) { loadOpapIncomeNames(); } });
+      
+      let dateObj = new Date();
+      document.getElementById('opap-income-bulan').value = (dateObj.getMonth() + 1).toString();
+      document.getElementById('opap-income-tanggal').valueAsDate = dateObj;
     }
 
-    function openSertifikasi() {
-      document.getElementById('view-landing').style.display = 'none';
-      document.getElementById('view-sertifikasi-menu').style.display = 'flex';
-      document.getElementById('view-sertifikasi').style.display = 'none';
-    }
+    function loadOpapIncomeNames() {
+      const satker = document.getElementById('opap-income-satker').value; const listDiv = document.getElementById('opap-income-list');
+      const isValid = globalOpapMaster.some(item => item.satker === satker);
+      if(!isValid) { document.getElementById('opap-names-container').classList.add('hidden'); return; }
+      
+      const names = globalOpapMaster.filter(item => item.satker === satker).sort((a, b) => a.nama.localeCompare(b.nama));
+      let html = ''; 
+      names.forEach((item) => { html += `<div class="flex justify-between items-center bg-white p-3 border border-slate-200 rounded-lg"><div class="font-bold text-slate-700">${item.nama}</div><div class="w-1/2"><input type="number" data-nama="${item.nama}" class="opap-indiv-nominal win-input bg-slate-50" placeholder="Rp"></div></div>`; });
+      listDiv.innerHTML = html; document.getElementById('opap-names-container').classList.remove('hidden');
 
-    function openSertifikasiApp(tabName) {
-      document.getElementById('view-sertifikasi-menu').style.display = 'none';
-      document.getElementById('view-sertifikasi').style.display = 'flex';
-      switchTab(tabName);
+      if(names.length > 1) { document.getElementById('opap-bulk-wrapper').classList.remove('hidden'); } else { document.getElementById('opap-bulk-wrapper').classList.add('hidden'); }
     }
     
-    function backToSertifikasiMenu() {
-      document.getElementById('view-sertifikasi').style.display = 'none';
-      document.getElementById('view-sertifikasi-menu').style.display = 'flex';
-    }
-
-    function switchTab(tabName) {
-      document.getElementById('section-master').classList.add('hidden');
-      document.getElementById('section-form').classList.add('hidden');
-      document.getElementById('section-rekap').classList.add('hidden');
+    function applyOpapBulkNominal() { const bulkVal = document.getElementById('opap-bulk-nominal').value; document.querySelectorAll('.opap-indiv-nominal').forEach(input => input.value = bulkVal); }
+    
+    async function submitOpapIncome() {
+      const tanggal = document.getElementById('opap-income-tanggal').value; const satker = document.getElementById('opap-income-satker').value; const metode = document.getElementById('opap-income-metode').value; const untukBulan = document.getElementById('opap-income-bulan').value;
+      if(!tanggal || !satker || !untukBulan) return showAlert('Isi Satker, Tanggal, dan Bulan!');
+      let dataToSave = []; document.querySelectorAll('.opap-indiv-nominal').forEach(input => dataToSave.push({ nama: input.getAttribute('data-nama'), nominal: input.value }));
       
-      var btns = document.getElementsByClassName('tab-btn');
-      btns[0].classList.remove('active');
-      btns[1].classList.remove('active');
-      btns[2].classList.remove('active');
-      
-      if (tabName === 'master') {
-        document.getElementById('section-master').classList.remove('hidden');
-        btns[0].classList.add('active');
-      } else if (tabName === 'form') {
-        document.getElementById('section-form').classList.remove('hidden');
-        btns[1].classList.add('active');
-        loadMasterDataOptions();
-      } else {
-        document.getElementById('section-rekap').classList.remove('hidden');
-        btns[2].classList.add('active');
-        applyFilter(); 
+      const msg = await fetchAPI('saveOpapIncome', { tanggal, untukBulan, satker, dataNominal: dataToSave, metode });
+      if(msg) { 
+          showAlert(msg); 
+          if(opapSatkerSelect) opapSatkerSelect.clear();
+          document.getElementById('opap-bulk-nominal').value = ''; 
+          document.getElementById('opap-names-container').classList.add('hidden'); 
+          window.scrollTo({ top: 0, behavior: 'smooth' }); 
       }
     }
 
-    /**
-     * Memanggil backend Google Apps Script secara langsung dengan Token Otentikasi
-     */
-    function callBackend(methodName, payload, onSuccess, onError) {
+    async function openOpapRekap() {
+      nav('opap-rekap'); 
+      document.getElementById('opap-rekap-list').innerHTML = '<tr><td colspan="4" class="text-center py-4">Memuat data...</td></tr>'; 
+      document.getElementById('opap-tunggakan-list').innerHTML = ''; document.getElementById('opap-metode-list').innerHTML = '';
       
-      // ⚠️ GANTI STRING DI BAWAH INI DENGAN URL WEB APP (BERAKHIRAN /EXEC) MILIKMU ⚠️
-      var GAS_URL = "https://script.google.com/macros/s/AKfycbyPVfOiyoWCrlOa2ZKJH1rcyCSjtNXgLg09jihdQ0Pv1uzgJOaB20Ych4kO7wyGf46pyA/exec"; 
-      var API_TOKEN = "ZETTBOS_SECURE_KEY_2026"; 
+      const data = await fetchAPI('getRekapOpap'); if(!data) return; globalRekapOpap = data;
+      document.getElementById('filter-tahun-opap').innerHTML = getYearOptions();
       
-      if (window.location.hostname === "preview.googleusercontent.com" || window.location.hostname === "localhost" || GAS_URL.indexOf("MASUKKAN_URL") !== -1) {
-        setTimeout(function() {
-          updateConnectionStatus(true, 'Mode Simulasi (API OK)');
-          if (methodName === 'saveSertifikasi' || methodName === 'saveMasterData') {
-            onSuccess({ success: true, message: "Sukses (Simulasi)!" });
-          } else if (methodName === 'getMasterDataList') {
-            onSuccess({ success: true, namas: ["ALEX", "BUDI"], ras: ["IT", "HR"], map: { "ALEX": "IT", "BUDI": "HR" } });
-          } else if (methodName === 'getRekapData') {
-            onSuccess({ success: true, data: [], totalNominal: 0, hasMore: false });
-          }
-        }, 800);
-        return;
-      }
+      let satkers = [...new Set(data.master.map(item => item.satker))].sort((a, b) => a.localeCompare(b));
+      let selectEl = document.getElementById('filter-satker-opap');
+      if(opapRekapSatkerSelect) opapRekapSatkerSelect.destroy();
 
-      var requestBody = {
-        method: methodName,
-        payload: payload,
-        token: API_TOKEN
-      };
+      let options = '<option value="">Semua Satker (Tampilkan Semua)</option>'; 
+      satkers.forEach(s => options += `<option value="${s}">${s}</option>`);
+      selectEl.innerHTML = options;
 
-      fetch(GAS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(requestBody)
-      })
-      .then(function(response) {
-        if (!response.ok) throw new Error("Gagal menghubungi server Apps Script");
-        return response.json();
-      })
-      .then(function(data) {
-        updateConnectionStatus(true, 'Server Terhubung');
-        onSuccess(data);
-      })
-      .catch(function(error) {
-        updateConnectionStatus(false, 'Koneksi Terputus');
-        onError(error);
+      opapRekapSatkerSelect = new TomSelect("#filter-satker-opap", { create: false, sortField: { field: "text", direction: "asc" }, onChange: function(value) { renderRekapOpap(); } });
+      renderRekapOpap();
+    }
+
+    function renderRekapOpap() {
+      const tahun = parseInt(document.getElementById('filter-tahun-opap').value);
+      const bulanFilter = document.getElementById('filter-bulan-opap').value;
+      const satkerFilter = document.getElementById('filter-satker-opap').value;
+
+      let expectedMonths = getExpectedMonths(tahun);
+      let filterBulanActive = bulanFilter !== 'all';
+      if (filterBulanActive) expectedMonths = [parseInt(bulanFilter)];
+
+      let filteredIncome = globalRekapOpap.income.filter(inc => {
+        if(!inc.tanggal) return false; let d = new Date(inc.tanggal);
+        if(d.getFullYear() !== tahun) return false;
+        if(filterBulanActive && inc.untukBulan !== parseInt(bulanFilter)) return false;
+        return true;
+      });
+
+      let metodeGroups = {};
+      filteredIncome.forEach(inc => {
+          let m = inc.metode || 'TUNAI';
+          if (!metodeGroups[m]) metodeGroups[m] = { count: 0, total: 0 };
+          metodeGroups[m].count++; metodeGroups[m].total += (parseFloat(inc.nominal) || 0);
+      });
+
+      let htmlMetode = ''; let grandTotalMetode = 0;
+      Object.keys(metodeGroups).sort().forEach(m => {
+          htmlMetode += `<tr class="border-b hover:bg-slate-50"><td class="font-bold text-slate-700">${m}</td><td class="text-slate-600">${metodeGroups[m].count} Transaksi</td><td class="font-bold text-emerald-600">${formatRp(metodeGroups[m].total)}</td></tr>`;
+          grandTotalMetode += metodeGroups[m].total;
+      });
+      htmlMetode += `<tr class="bg-slate-100 font-bold"><td colspan="2" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotalMetode)}</td></tr>`;
+      document.getElementById('opap-metode-list').innerHTML = Object.keys(metodeGroups).length > 0 ? htmlMetode : '<tr><td colspan="3" class="text-center py-4">Data kosong.</td></tr>';
+
+      let satkerGroups = {};
+      globalRekapOpap.master.forEach(m => { if (!satkerGroups[m.satker]) satkerGroups[m.satker] = { satker: m.satker, people: [], totalNominal: 0, lunasCount: 0 }; });
+
+      globalRekapOpap.master.forEach(m => {
+        let personIncomesAllYear = globalRekapOpap.income.filter(inc => inc.nama === m.nama && inc.satker === m.satker && inc.tanggal && new Date(inc.tanggal).getFullYear() === tahun);
+        let personIncomesFiltered = personIncomesAllYear.filter(inc => !filterBulanActive || inc.untukBulan === parseInt(bulanFilter));
+        
+        let paidMonths = [...new Set(personIncomesAllYear.map(inc => inc.untukBulan))];
+        let missingMonths = expectedMonths.filter(em => !paidMonths.includes(em));
+        
+        let totalPaid = 0; let metodes = new Set();
+        personIncomesFiltered.forEach(inc => { totalPaid += (parseFloat(inc.nominal) || 0); metodes.add(inc.metode || 'TUNAI'); });
+
+        let isLunas = missingMonths.length === 0;
+        if(satkerGroups[m.satker]) {
+          satkerGroups[m.satker].people.push({ nama: m.nama, totalPaid: totalPaid, isLunas: isLunas, missingMonths: missingMonths.map(mm => monthNames[mm-1]), metodes: Array.from(metodes).join(', ') });
+          satkerGroups[m.satker].totalNominal += totalPaid;
+          if (isLunas) satkerGroups[m.satker].lunasCount++;
+        }
+      });
+
+      let htmlSatker = ''; let htmlTunggakan = ''; let index = 0; let grandTotalSatker = 0;
+
+      Object.values(satkerGroups).sort((a,b)=>a.satker.localeCompare(b.satker)).forEach(sg => {
+        if(satkerFilter !== '' && sg.satker !== satkerFilter) return;
+        index++; grandTotalSatker += sg.totalNominal;
+        let isSatkerLunas = sg.lunasCount === sg.people.length && sg.people.length > 0;
+        let badgeSatker = isSatkerLunas ? `<span class="badge badge-lunas">Lunas</span>` : `<span class="badge badge-belum">Belum</span>`;
+
+        htmlSatker += `<tr class="border-b border-slate-300 bg-white hover:bg-slate-50 cursor-pointer" onclick="document.getElementById('sub-opap-${index}').classList.toggle('hidden')">
+            <td class="font-bold text-slate-800 flex justify-between items-center">${sg.satker} <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></td>
+            <td>${badgeSatker}</td><td class="text-sm font-medium text-slate-500">${sg.lunasCount}/${sg.people.length} Orang</td><td class="font-bold text-emerald-600">${formatRp(sg.totalNominal)}</td></tr>
+            <tr id="sub-opap-${index}" class="hidden bg-slate-50"><td colspan="4" class="p-0 border-b-2 border-slate-200"><table class="w-full text-sm">`;
+        
+        sg.people.forEach(p => {
+            let badgeP = p.isLunas ? `<span class="text-emerald-600 font-bold">Lunas</span>` : `<span class="text-red-500 font-bold">Belum</span>`;
+            let detailTunggakan = p.isLunas ? `<span class="text-slate-400">${p.metodes}</span>` : `Tunggakan: ${p.missingMonths.join(', ')}`;
+            htmlSatker += `<tr class="border-b border-slate-200/50 last:border-0"><td class="pl-8 py-2 w-1/3 text-slate-700">• ${p.nama}</td><td class="py-2 w-1/6">${badgeP}</td><td class="py-2 w-1/4 font-medium text-slate-600">${formatRp(p.totalPaid)}</td><td class="py-2 text-xs text-red-500 italic">${detailTunggakan}</td></tr>`;
+            if (!p.isLunas && expectedMonths.length > 0) htmlTunggakan += `<tr class="border-b hover:bg-slate-50"><td class="font-medium text-slate-700">${p.nama}</td><td class="text-slate-500">${sg.satker}</td><td class="text-red-500 font-semibold">${p.missingMonths.join(', ')}</td></tr>`;
+        });
+        htmlSatker += `</table></td></tr>`;
+      });
+
+      htmlSatker += `<tr class="bg-slate-100 font-bold"><td colspan="3" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotalSatker)}</td></tr>`;
+      document.getElementById('opap-rekap-list').innerHTML = htmlSatker || '<tr><td colspan="4" class="text-center py-4">Data kosong.</td></tr>';
+      document.getElementById('opap-tunggakan-list').innerHTML = htmlTunggakan || '<tr><td colspan="3" class="text-center py-4 text-emerald-600 font-semibold">Semua Lunas! Tidak ada tunggakan.</td></tr>';
+    }
+
+    // ================== OP-RA ==================
+    async function openOpraMaster() { nav('opra-master'); refreshOpraMasterTable(); }
+    async function refreshOpraMasterTable() {
+      document.getElementById('opra-master-list').innerHTML = '<tr><td colspan="2" class="text-center py-4">Memuat data...</td></tr>';
+      const data = await fetchAPI('getOpraMaster'); if(!data) return; let html = '';
+      data.forEach(item => { html += `<tr><td class="font-medium text-slate-700">${item.satker}</td><td><button onclick="editOpra('${item.id}', '${item.satker}')" class="text-blue-600 mr-2">Edit</button> <button onclick="deleteOpra('${item.id}')" class="text-red-500">Hapus</button></td></tr>`; });
+      document.getElementById('opra-master-list').innerHTML = html || '<tr><td colspan="2" class="text-center py-4">Kosong.</td></tr>';
+    }
+    async function saveOpraMasterData() {
+      const id = document.getElementById('opra-id').value; const satker = document.getElementById('opra-satker').value;
+      if (!satker) return showAlert("Nama Satker harus diisi!");
+      document.getElementById('opra-satker').value = ''; document.getElementById('opra-id').value = '';
+      const msg = await fetchAPI('saveOpraMaster', { id, satker }); if(msg) { showAlert(msg); refreshOpraMasterTable(); }
+    }
+    function editOpra(id, satker) { document.getElementById('opra-id').value = id; document.getElementById('opra-satker').value = satker; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    function deleteOpra(id) { showConfirm('Hapus satker ini?', async function() { const msg = await fetchAPI('deleteOpraMaster', { id }); if(msg) { showAlert(msg); refreshOpraMasterTable(); } }); }
+    
+    async function openOpraIncome() {
+      nav('opra-income'); 
+      if(opraSatkerSelect) opraSatkerSelect.clear();
+      
+      const data = await fetchAPI('getOpraMaster'); if(!data) return; 
+      data.sort((a, b) => a.satker.localeCompare(b.satker));
+      
+      let selectEl = document.getElementById('opra-income-satker');
+      if(opraSatkerSelect) opraSatkerSelect.destroy();
+
+      let options = '<option value="">-- Ketik atau Pilih Satker --</option>'; 
+      data.forEach(item => options += `<option value="${item.satker}">${item.satker}</option>`);
+      selectEl.innerHTML = options;
+
+      opraSatkerSelect = new TomSelect("#opra-income-satker", { create: false, sortField: { field: "text", direction: "asc" } });
+
+      let dateObj = new Date();
+      document.getElementById('opra-income-bulan').value = (dateObj.getMonth() + 1).toString();
+      document.getElementById('opra-income-tanggal').valueAsDate = dateObj;
+    }
+
+    async function submitOpraIncome() {
+      const tanggal = document.getElementById('opra-income-tanggal').value; const satker = document.getElementById('opra-income-satker').value; const nominal = document.getElementById('opra-income-nominal').value; const metode = document.getElementById('opra-income-metode').value; const untukBulan = document.getElementById('opra-income-bulan').value;
+      if(!tanggal || !satker || !nominal || !untukBulan) return showAlert('Lengkapi semua data!');
+      const msg = await fetchAPI('saveOpraIncome', { tanggal, untukBulan, satker, nominal, metode });
+      if(msg) { showAlert(msg); if(opraSatkerSelect) opraSatkerSelect.clear(); document.getElementById('opra-income-nominal').value = ''; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    }
+
+    async function openOpraRekap() {
+      nav('opra-rekap'); document.getElementById('opra-rekap-list').innerHTML = '<tr><td colspan="3" class="text-center py-4">Memuat data...</td></tr>';
+      const data = await fetchAPI('getRekapOpra'); if(!data) return; globalRekapOpra = data;
+      document.getElementById('filter-tahun-opra').innerHTML = getYearOptions();
+      renderRekapOpra();
+    }
+
+    function renderRekapOpra() {
+      const tahun = parseInt(document.getElementById('filter-tahun-opra').value);
+      const bulanFilter = document.getElementById('filter-bulan-opra').value;
+      let filterBulanActive = bulanFilter !== 'all';
+
+      let filteredIncome = globalRekapOpra.income.filter(inc => {
+        if(!inc.tanggal) return false; let d = new Date(inc.tanggal);
+        if(d.getFullYear() !== tahun) return false;
+        if(filterBulanActive && inc.untukBulan !== parseInt(bulanFilter)) return false;
+        return true;
+      });
+
+      let metodeGroups = {};
+      filteredIncome.forEach(inc => {
+          let m = inc.metode || 'TUNAI';
+          if (!metodeGroups[m]) metodeGroups[m] = { count: 0, total: 0 };
+          metodeGroups[m].count++;
+          metodeGroups[m].total += (parseFloat(inc.nominal) || 0);
+      });
+
+      let htmlMetode = ''; let grandTotalMetode = 0;
+      Object.keys(metodeGroups).sort().forEach(m => {
+          htmlMetode += `<tr class="border-b hover:bg-slate-50"><td class="font-bold text-slate-700">${m}</td><td class="text-slate-600">${metodeGroups[m].count} Transaksi</td><td class="font-bold text-emerald-600">${formatRp(metodeGroups[m].total)}</td></tr>`;
+          grandTotalMetode += metodeGroups[m].total;
+      });
+      htmlMetode += `<tr class="bg-slate-100 font-bold"><td colspan="2" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotalMetode)}</td></tr>`;
+      document.getElementById('opra-metode-list').innerHTML = Object.keys(metodeGroups).length > 0 ? htmlMetode : '<tr><td colspan="3" class="text-center py-4">Data kosong.</td></tr>';
+
+      let htmlSatker = ''; let grandTotalSatker = 0;
+
+      globalRekapOpra.master.sort((a,b)=>a.satker.localeCompare(b.satker)).forEach(m => {
+        let satkerIncomesAllYear = globalRekapOpra.income.filter(inc => inc.satker === m.satker && inc.tanggal && new Date(inc.tanggal).getFullYear() === tahun);
+        let satkerIncomesFiltered = satkerIncomesAllYear.filter(inc => !filterBulanActive || inc.untukBulan === parseInt(bulanFilter));
+
+        let totalNominal = 0; let metodes = new Set();
+        satkerIncomesFiltered.forEach(inc => { totalNominal += (parseFloat(inc.nominal) || 0); metodes.add(inc.metode || 'TUNAI'); });
+
+        grandTotalSatker += totalNominal;
+        let hasPayment = totalNominal > 0;
+        let badge = hasPayment ? `<span class="badge badge-lunas">Ada Setoran</span>` : `<span class="badge bg-slate-200 text-slate-500">Nihil</span>`;
+        let desc = hasPayment ? `<span class="text-xs text-slate-400 block">Metode: ${Array.from(metodes).join(', ')}</span>` : ``;
+
+        htmlSatker += `<tr class="border-b"><td class="font-bold text-slate-700 py-3">${m.satker}${desc}</td><td>${badge}</td><td class="font-bold text-emerald-600">${formatRp(totalNominal)}</td></tr>`;
+      });
+      
+      htmlSatker += `<tr class="bg-slate-100 font-bold"><td colspan="2" class="text-right py-3">TOTAL KESELURUHAN:</td><td class="text-emerald-600 py-3">${formatRp(grandTotalSatker)}</td></tr>`;
+      document.getElementById('opra-rekap-list').innerHTML = htmlSatker || '<tr><td colspan="3" class="text-center py-4">Data kosong.</td></tr>';
+    }
+
+    // ================== SERTIFIKASI ==================
+    async function openSertifikasiMaster() { nav('sertifikasi-master'); refreshSertifikasiMasterTable(); }
+    async function refreshSertifikasiMasterTable() {
+      document.getElementById('sertifikasi-master-list').innerHTML = '<tr><td colspan="3" class="text-center py-4">Memuat data...</td></tr>';
+      const data = await fetchAPI('getSertifikasiMaster'); if(!data) return; let html = '';
+      data.forEach(item => { html += `<tr><td class="font-medium text-slate-700">${item.nama}</td><td class="text-slate-500">${item.ra}</td><td><button onclick="deleteSertifikasiMaster('${item.id}')" class="text-red-500">Hapus</button></td></tr>`; });
+      document.getElementById('sertifikasi-master-list').innerHTML = html || '<tr><td colspan="3" class="text-center py-4">Data kosong.</td></tr>';
+    }
+    async function saveSertifikasiMasterData() {
+      const nama = document.getElementById('sertifikasi-master-nama').value; const ra = document.getElementById('sertifikasi-master-ra').value;
+      if (!nama || !ra) return showAlert("Nama dan RA harus diisi!");
+      document.getElementById('sertifikasi-master-nama').value = ''; document.getElementById('sertifikasi-master-ra').value = '';
+      const msg = await fetchAPI('saveSertifikasiMaster', { nama, ra }); if(msg) { showAlert(msg); refreshSertifikasiMasterTable(); }
+    }
+    async function deleteSertifikasiMaster(id) {
+      showConfirm('Hapus Master Data ini?', async function() {
+        const msg = await fetchAPI('deleteSertifikasiMaster', { id }); if(msg) { showAlert(msg); refreshSertifikasiMasterTable(); }
       });
     }
 
-    function submitMasterForm() {
-      var btnSave = document.getElementById('btn-save-master');
-      var payload = {
-        nama: document.getElementById('master-nama').value,
-        ra: document.getElementById('master-ra').value
-      };
+    async function openSertifikasiIncome() {
+      nav('sertifikasi-income');
+      const data = await fetchAPI('getSertifikasiMasterList'); if(!data) return;
+      globalSertifikasiMaster = data;
 
-      btnSave.innerText = "Menyimpan...";
-      btnSave.disabled = true;
+      let elNama = document.getElementById('sertifikasi-input-nama');
+      let elRa = document.getElementById('sertifikasi-input-ra');
+      
+      if(sertifikasiNamaSelect) sertifikasiNamaSelect.destroy();
+      if(sertifikasiRaSelect) sertifikasiRaSelect.destroy();
 
-      callBackend('saveMasterData', payload, 
-        function(response) {
-          if (response.success) {
-            showToast(response.message, true);
-            document.getElementById('form-master').reset();
-          } else { showToast("Gagal: " + response.message, false); }
-          btnSave.innerText = "Simpan Master Data";
-          btnSave.disabled = false;
-        },
-        function(error) {
-          showToast("Error Koneksi / Token", false);
-          btnSave.innerText = "Simpan Master Data";
-          btnSave.disabled = false;
-        }
-      );
+      let htmlNama = '<option value="">Pilih Nama...</option>';
+      data.namas.forEach(n => htmlNama += `<option value="${n}">${n}</option>`);
+      elNama.innerHTML = htmlNama;
+
+      let htmlRa = '<option value="">Pilih RA...</option>';
+      data.ras.forEach(r => htmlRa += `<option value="${r}">${r}</option>`);
+      elRa.innerHTML = htmlRa;
+
+      sertifikasiNamaSelect = new TomSelect("#sertifikasi-input-nama", { create: false, sortField: { field: "text", direction: "asc" } });
+      sertifikasiRaSelect = new TomSelect("#sertifikasi-input-ra", { create: false, sortField: { field: "text", direction: "asc" } });
     }
 
-    function loadMasterDataOptions() {
-      var elNama = document.getElementById('input-nama');
-      var elRa = document.getElementById('input-ra');
-      elNama.innerHTML = '<option value="" disabled selected>Memuat data...</option>';
-      elRa.innerHTML = '<option value="" disabled selected>Memuat data...</option>';
-      
-      callBackend('getMasterDataList', {}, 
-        function(response) {
-          if (response.success) {
-            masterDataMap = response.map || {}; 
-            var htmlNama = '<option value="" disabled selected>Pilih Nama...</option>';
-            for (var i = 0; i < response.namas.length; i++) htmlNama += '<option value="' + response.namas[i] + '">' + response.namas[i] + '</option>';
-            elNama.innerHTML = htmlNama;
-
-            var htmlRa = '<option value="" disabled selected>Pilih RA...</option>';
-            for (var j = 0; j < response.ras.length; j++) htmlRa += '<option value="' + response.ras[j] + '">' + response.ras[j] + '</option>';
-            elRa.innerHTML = htmlRa;
-          } else { showToast("Gagal memuat Master Data", false); }
-        },
-        function(error) { showToast("Error Koneksi", false); }
-      );
-    }
-
-    function autoFillRa() {
-      var nama = document.getElementById('input-nama').value;
-      var elRa = document.getElementById('input-ra');
-      
-      if (nama && masterDataMap[nama]) {
-        elRa.value = masterDataMap[nama];
-        elRa.style.backgroundColor = '#e6f7ff';
-        elRa.style.borderColor = 'var(--primary-blue)';
-        setTimeout(function() {
-          elRa.style.backgroundColor = '#fafafa';
-          elRa.style.borderColor = '#dcdcdc';
-        }, 800);
+    function autoFillSertifikasiRa() {
+      const nama = document.getElementById('sertifikasi-input-nama').value;
+      if (nama && globalSertifikasiMaster.map[nama]) {
+        sertifikasiRaSelect.setValue(globalSertifikasiMaster.map[nama]);
       }
     }
 
-    function submitForm() {
-      var btnSave = document.getElementById('btn-save');
-      var payload = {
-        nama: document.getElementById('input-nama').value,
-        ra: document.getElementById('input-ra').value,
-        bulan: document.getElementById('input-bulan').value,
-        nominal: document.getElementById('input-nominal').value,
-        metode: document.getElementById('input-metode').value
-      };
+    async function submitSertifikasiIncome() {
+      const nama = document.getElementById('sertifikasi-input-nama').value;
+      const ra = document.getElementById('sertifikasi-input-ra').value;
+      const bulan = document.getElementById('sertifikasi-input-bulan').value;
+      const nominal = document.getElementById('sertifikasi-input-nominal').value;
+      const metode = document.getElementById('sertifikasi-input-metode').value;
 
-      btnSave.innerText = "Menyimpan...";
-      btnSave.disabled = true;
-
-      callBackend('saveSertifikasi', payload, 
-        function(response) {
-          if (response.success) {
-            showToast(response.message, true);
-            document.getElementById('form-sertifikasi').reset();
-          } else { showToast("Gagal: " + response.message, false); }
-          btnSave.innerText = "Simpan Data Insentif";
-          btnSave.disabled = false;
-        },
-        function(error) {
-          showToast("Error Koneksi / Token", false);
-          btnSave.innerText = "Simpan Data Insentif";
-          btnSave.disabled = false;
-        }
-      );
-    }
-
-    function debounceFilter() {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(function() { applyFilter(); }, 500); 
-    }
-
-    function applyFilter() {
-      currentPage = 1;
-      document.getElementById('rekap-list').innerHTML = '';
-      fetchData();
-    }
-
-    function loadMoreData() {
-      if (!isFetching && hasMoreData) {
-        currentPage++;
-        fetchData();
+      if(!nama || !ra || !bulan || !nominal) return showAlert('Lengkapi semua data form!');
+      const msg = await fetchAPI('saveSertifikasi', { nama, ra, bulan, nominal, metode });
+      if(msg) {
+        showAlert(msg);
+        document.getElementById('sertifikasi-input-nominal').value = '';
+        if(sertifikasiNamaSelect) sertifikasiNamaSelect.clear();
+        if(sertifikasiRaSelect) sertifikasiRaSelect.clear();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
 
-    function renderSkeleton() {
-      var list = document.getElementById('rekap-list');
-      var skelHtml = '';
-      for (var i = 0; i < 3; i++) skelHtml += '<div class="skeleton skeleton-card"></div>';
-      list.innerHTML += '<div id="skeleton-container">' + skelHtml + '</div>';
+    async function openSertifikasiRekap() {
+      nav('sertifikasi-rekap');
+      document.getElementById('sertifikasi-rekap-list').innerHTML = '<div class="text-center py-4">Memuat data...</div>';
+      const data = await fetchAPI('getRekapSertifikasi'); if(!data) return;
+      globalSertifikasiRekap = data.data || [];
+      renderRekapSertifikasi();
     }
 
-    function removeSkeleton() {
-      var skel = document.getElementById('skeleton-container');
-      if (skel) skel.remove();
-    }
+    function renderRekapSertifikasi() {
+      const filterRa = document.getElementById('filter-ra-sertifikasi').value.toLowerCase();
+      const filterBulan = document.getElementById('filter-bulan-sertifikasi').value;
 
-    function fetchData() {
-      isFetching = true;
-      document.getElementById('btn-load-more').classList.add('hidden');
-      renderSkeleton();
+      let filtered = globalSertifikasiRekap.filter(r => {
+        let matchRa = filterRa === '' || r.ra.toLowerCase().includes(filterRa);
+        let matchBulan = filterBulan === 'semua' || r.bulan.toLowerCase() === filterBulan.toLowerCase();
+        return matchRa && matchBulan;
+      });
 
-      var filters = {
-        ra: document.getElementById('filter-ra').value,
-        bulan: document.getElementById('filter-bulan').value,
-        page: currentPage,
-        limit: currentLimit
-      };
+      let totalNominal = 0;
+      let html = '';
+      filtered.forEach(r => {
+        totalNominal += parseFloat(r.nominal) || 0;
+        html += `<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+          <div>
+            <h4 class="font-bold text-[#0067c0] text-base">${r.nama}</h4>
+            <p class="text-xs text-slate-500">RA: <strong>${r.ra}</strong> &bull; Bulan: ${r.bulan} &bull; Metode: ${r.metode}</p>
+            <span class="text-[10px] text-slate-400">${r.tanggal}</span>
+          </div>
+          <div class="font-bold text-emerald-600 text-lg">${formatRp(r.nominal)}</div>
+        </div>`;
+      });
 
-      callBackend('getRekapData', filters,
-        function(response) {
-          removeSkeleton();
-          isFetching = false;
-
-          if (response.success) {
-            document.getElementById('display-total-nominal').innerText = 'Total: ' + formatRupiah(response.totalNominal);
-            hasMoreData = response.hasMore;
-            
-            var list = document.getElementById('rekap-list');
-            if (response.data.length === 0 && currentPage === 1) {
-              list.innerHTML = '<div style="text-align:center; color: var(--text-muted); padding: 20px;">Data tidak ditemukan.</div>';
-              return;
-            }
-
-            var html = '';
-            for (var i = 0; i < response.data.length; i++) {
-              var r = response.data[i];
-              html += '<div class="rekap-card">';
-              html += '<div class="rekap-header"><div class="rekap-title">' + r.nama + '</div><div style="font-weight: 600;">' + formatRupiah(r.nominal) + '</div></div>';
-              html += '<div class="rekap-meta">RA: <strong>' + r.ra + '</strong> &bull; Bulan: ' + r.bulan + ' &bull; ' + r.metode + '<br><span style="font-size:0.8rem; color: #aaa;">' + r.tanggal + '</span></div>';
-              html += '</div>';
-            }
-            list.innerHTML += html;
-            
-            if (hasMoreData) document.getElementById('btn-load-more').classList.remove('hidden');
-          } else {
-            showToast("Gagal memuat data", false);
-          }
-        },
-        function(error) {
-          removeSkeleton();
-          isFetching = false;
-          showToast("Gagal terhubung ke database", false);
-        }
-      );
+      document.getElementById('sertifikasi-total-nominal').innerText = 'Total: ' + formatRp(totalNominal);
+      document.getElementById('sertifikasi-rekap-list').innerHTML = html || '<div class="text-center py-6 text-slate-400 font-medium">Data tidak ditemukan.</div>';
     }
   </script>
 </body>
