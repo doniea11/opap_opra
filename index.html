@@ -351,6 +351,41 @@
 
     .toast.show { opacity: 1; transform: translateX(0); }
     .toast.error { border-left-color: #dc3545; }
+    
+    .connection-badge {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      border: 1px solid var(--border-color);
+      z-index: 999;
+    }
+
+    .connection-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #ffc107;
+      animation: pulse 1.5s infinite;
+    }
+
+    .connection-dot.online { background-color: #28a745; }
+    .connection-dot.offline { background-color: #dc3545; animation: none; }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
     .hidden { display: none !important; }
   </style>
 </head>
@@ -372,14 +407,14 @@
   <div id="view-landing" class="view-container">
     <div class="menu-grid">
       
-      <div class="circle-card" onclick="showToast('Fitur OP-AP sedang dalam penyesuaian.', false)">
+      <div class="circle-card" onclick="showToast('Modul OP-AP aktif.', true)">
         <div class="icon-wrapper">
           <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
         </div>
         <h3>OP-AP</h3>
       </div>
 
-      <div class="circle-card" onclick="showToast('Fitur OP-RA sedang dalam penyesuaian.', false)">
+      <div class="circle-card" onclick="showToast('Modul OP-RA aktif.', true)">
         <div class="icon-wrapper">
           <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
         </div>
@@ -552,6 +587,12 @@
   </div>
 
   <div id="toast-container"></div>
+  
+  <!-- Connection Indicator Badge -->
+  <div class="connection-badge" id="connection-badge">
+    <div class="connection-dot" id="connection-dot"></div>
+    <span id="connection-text">Memeriksa Server...</span>
+  </div>
 
   <script>
     var currentPage = 1;
@@ -576,6 +617,18 @@
         toast.classList.remove('show');
         setTimeout(function() { toast.remove(); }, 400);
       }, 3000);
+    }
+
+    function updateConnectionStatus(isOnline, message) {
+      var dot = document.getElementById('connection-dot');
+      var text = document.getElementById('connection-text');
+      if (isOnline) {
+        dot.className = 'connection-dot online';
+        text.innerText = message || 'Server Terhubung';
+      } else {
+        dot.className = 'connection-dot offline';
+        text.innerText = message || 'Koneksi Terputus';
+      }
     }
 
     function goHome() {
@@ -626,29 +679,28 @@
     }
 
     /**
-     * Memanggil langsung API Google Apps Script dari Frontend Vercel
+     * Memanggil backend Google Apps Script secara langsung dengan Token Otentikasi
      */
     function callBackend(methodName, payload, onSuccess, onError) {
       
-      // ⚠️ GANTI STRING DI BAWAH INI DENGAN URL WEB APP MILIKMU ⚠️
+      // ⚠️ GANTI STRING DI BAWAH INI DENGAN URL WEB APP (BERAKHIRAN /EXEC) MILIKMU ⚠️
       var GAS_URL = "https://script.google.com/macros/s/AKfycbyPVfOiyoWCrlOa2ZKJH1rcyCSjtNXgLg09jihdQ0Pv1uzgJOaB20Ych4kO7wyGf46pyA/exec"; 
-      var API_TOKEN = "ZETTBOS_SECURE_KEY_2026"; // Token dikirim langsung dari sini
+      var API_TOKEN = "ZETTBOS_SECURE_KEY_2026"; 
       
-      // Fallback jika tombol preview Canvas ditekan (Tanpa Vercel)
-      if (window.location.hostname === "preview.googleusercontent.com" || window.location.hostname === "localhost") {
+      if (window.location.hostname === "preview.googleusercontent.com" || window.location.hostname === "localhost" || GAS_URL.indexOf("MASUKKAN_URL") !== -1) {
         setTimeout(function() {
+          updateConnectionStatus(true, 'Mode Simulasi (API OK)');
           if (methodName === 'saveSertifikasi' || methodName === 'saveMasterData') {
-            onSuccess({ success: true, message: "Sukses (Mode Preview)!" });
+            onSuccess({ success: true, message: "Sukses (Simulasi)!" });
           } else if (methodName === 'getMasterDataList') {
             onSuccess({ success: true, namas: ["ALEX", "BUDI"], ras: ["IT", "HR"], map: { "ALEX": "IT", "BUDI": "HR" } });
           } else if (methodName === 'getRekapData') {
             onSuccess({ success: true, data: [], totalNominal: 0, hasMore: false });
           }
-        }, 1000);
+        }, 800);
         return;
       }
 
-      // Bungkus data dan token untuk dikirim ke Apps Script
       var requestBody = {
         method: methodName,
         payload: payload,
@@ -657,15 +709,21 @@
 
       fetch(GAS_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain' }, // Wajib text/plain untuk GAS
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(requestBody)
       })
       .then(function(response) {
         if (!response.ok) throw new Error("Gagal menghubungi server Apps Script");
         return response.json();
       })
-      .then(function(data) { onSuccess(data); })
-      .catch(function(error) { onError(error); });
+      .then(function(data) {
+        updateConnectionStatus(true, 'Server Terhubung');
+        onSuccess(data);
+      })
+      .catch(function(error) {
+        updateConnectionStatus(false, 'Koneksi Terputus');
+        onError(error);
+      });
     }
 
     function submitMasterForm() {
@@ -688,7 +746,7 @@
           btnSave.disabled = false;
         },
         function(error) {
-          showToast("Error: " + error.message, false);
+          showToast("Error Koneksi / Token", false);
           btnSave.innerText = "Simpan Master Data";
           btnSave.disabled = false;
         }
@@ -714,7 +772,7 @@
             elRa.innerHTML = htmlRa;
           } else { showToast("Gagal memuat Master Data", false); }
         },
-        function(error) { showToast("Error: " + error.message, false); }
+        function(error) { showToast("Error Koneksi", false); }
       );
     }
 
@@ -756,7 +814,7 @@
           btnSave.disabled = false;
         },
         function(error) {
-          showToast("Error: " + error.message, false);
+          showToast("Error Koneksi / Token", false);
           btnSave.innerText = "Simpan Data Insentif";
           btnSave.disabled = false;
         }
@@ -838,7 +896,7 @@
         function(error) {
           removeSkeleton();
           isFetching = false;
-          showToast("Error sistem", false);
+          showToast("Gagal terhubung ke database", false);
         }
       );
     }
